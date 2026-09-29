@@ -8,7 +8,7 @@ test('home follows the approved layout and has no missing images', async ({ page
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Recent blog posts' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '땃땃한 최신글' })).toBeVisible();
   await expect(page.locator('.recent-grid .post-card')).toHaveCount(3);
   await expect(page.getByRole('heading', { name: 'News Research' })).toBeVisible();
   await expect(page.getByText('뉴스 리서치를 준비 중입니다')).toBeVisible();
@@ -26,11 +26,37 @@ test('home follows the approved layout and has no missing images', async ({ page
   expect(errors).toEqual([]);
 });
 
+test('the first category opens on entry while manual collapse, history and folder links still work', async ({ page }) => {
+  await page.goto('/posts/');
+  await expect(page.locator('.root-folder').first()).toHaveAttribute('open', '');
+  await expect(page.locator('details[open]')).toHaveCount(1);
+  await expect(summary(page, 'DE Map/Python')).toBeVisible();
+  await expect(page.locator('[data-reader-selection]')).toBeHidden();
+  await page.reload();
+  await expect(page.locator('details[open]')).toHaveCount(1);
+  await summary(page, 'DE Map').click();
+  await expect(page.locator('details[open]')).toHaveCount(0);
+  await summary(page, 'BE Map').click();
+  await expect(page.locator('details[data-folder="BE Map"]')).toHaveAttribute('open', '');
+  await expect(page.locator('details[open]')).toHaveCount(1);
+  await page.goBack();
+  await expect(page.locator('details[open]')).toHaveCount(0);
+  await page.goBack();
+  await expect(page.locator('.root-folder').first()).toHaveAttribute('open', '');
+  await page.goForward();
+  await expect(page.locator('details[open]')).toHaveCount(0);
+  await page.goto('/posts/?folder=Blog');
+  await expect(page.locator('details[data-folder="Blog"]')).toHaveAttribute('open', '');
+  await expect(page.locator('details[open]')).toHaveCount(1);
+  await expect(page.locator('[data-post-card="blog-memo"]')).toBeVisible();
+  await page.reload();
+  await expect(page.locator('details[data-folder="Blog"]')).toHaveAttribute('open', '');
+});
+
 test('folders open one branch; articles retain folder depth, refresh and history', async ({ page }) => {
   await page.goto('/posts/');
-  await expect(page.locator('details[open]')).toHaveCount(0);
-  await expect(page.locator('.root-folder')).toHaveCount(3);
-  await summary(page, 'DE Map').click();
+  await expect(page.locator('details[open]')).toHaveCount(1);
+  await expect(page.locator('.root-folder')).toHaveCount(4);
   await summary(page, 'DE Map/Python').click();
   await summary(page, 'DE Map/Python/파이썬 기본기').click();
   const lessons = page.locator('details[data-folder="DE Map/Python/파이썬 기본기"] .post-card');
@@ -72,12 +98,16 @@ test('tag filtering, incompatible deep links and browser history agree', async (
   await page.reload();
   await expect(page.locator('[data-filter-tag="python"]')).toHaveAttribute('aria-current', 'true');
   await page.goto('/posts/?tag=python');
-  await expect(page.locator('details[open]')).toHaveCount(0);
+  await expect(page.locator('details[open]')).toHaveCount(1);
+  await expect(page.locator('.root-folder').first()).toHaveAttribute('open', '');
+  await expect(page.locator('[data-filter-tag="python"]')).toHaveAttribute('aria-current', 'true');
 });
 
 test('keyboard navigation, theme persistence and legacy URLs work', async ({ page }) => {
   await page.goto('/posts/');
   await summary(page, 'DE Map').focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('details[data-folder="DE Map"]')).not.toHaveAttribute('open', '');
   await page.keyboard.press('Enter');
   await expect(page.locator('details[data-folder="DE Map"]')).toHaveAttribute('open', '');
   await page.getByRole('button', { name: '밝은 테마로 변경' }).click();
@@ -92,6 +122,10 @@ test('mobile has a readable article and a working return to its folder', async (
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.goto('/posts/');
+  await expect(page.locator('.posts-sidebar')).toBeVisible();
+  await expect(page.locator('.root-folder').first()).toHaveAttribute('open', '');
+  await expect(page.locator('details[open]')).toHaveCount(1);
   await page.goto('/posts/python-study01/');
   await expect(page.locator('.posts-sidebar')).toBeHidden();
   await expect(page.locator('.post-reader h1')).toBeVisible();
@@ -113,7 +147,8 @@ test('without JavaScript, static article and expandable folder links remain usab
   await expect(page.locator('.post-reader h1')).toBeVisible();
   await expect(page.locator('.prose')).toContainText('venv');
   await page.goto('http://127.0.0.1:4321/posts/');
-  await summary(page, 'DE Map').click();
+  await expect(page.locator('.root-folder').first()).toHaveAttribute('open', '');
+  await expect(page.locator('details[open]')).toHaveCount(1);
   await summary(page, 'DE Map/Python').click();
   await summary(page, 'DE Map/Python/파이썬 기본기').click();
   await page.locator('[data-post-card="python-study01"] h3 a').click();
@@ -123,17 +158,17 @@ test('without JavaScript, static article and expandable folder links remain usab
 
 test('drafts and archived templates are absent from public discovery and feeds', async ({ request }) => {
   const rss = await (await request.get('/rss.xml')).text();
-  expect((rss.match(/<item>/g) ?? []).length).toBe(9);
+  expect((rss.match(/<item>/g) ?? []).length).toBe(11);
   expect(rss).not.toContain('axi-0922');
-  expect(rss).not.toContain('dlnpl-book');
+  expect(rss).toContain('dlnpl-book');
+  expect(rss).toContain('blog-memo');
   expect(rss).not.toContain('archive-');
   for (const name of readdirSync('dist').filter((name) => /^sitemap.*\.xml$/.test(name))) {
     const sitemap = readFileSync(join('dist', name), 'utf8');
     expect(sitemap).not.toContain('/posts/axi-0922/');
-    expect(sitemap).not.toContain('/posts/dlnpl-book/');
     expect(sitemap).not.toContain('/posts/archive-');
     expect(sitemap).not.toContain('/blog/');
   }
   expect((await request.get('/posts/axi-0922/')).status()).toBe(404);
-  expect((await request.get('/posts/dlnpl-book/')).status()).toBe(404);
+  expect((await request.get('/posts/dlnpl-book/')).status()).toBe(200);
 });

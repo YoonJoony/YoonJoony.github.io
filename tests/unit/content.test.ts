@@ -14,7 +14,7 @@ test('each post belongs only to its direct folder, at the correct depth', () => 
     fixture('child', 'DE Map/Python/파이썬 기본기'),
     fixture('another', 'BE Map/Python'),
   ]);
-  assert.deepEqual(roots.map((node) => node.name), ['DE MAP', 'BE MAP', 'PROJECT']);
+  assert.deepEqual(roots.map((node) => node.name), ['DE MAP', 'BE MAP', 'PROJECT', 'BLOG']);
   const python = roots[0].children[0];
   assert.deepEqual(roots[0].directPostIds, []);
   assert.deepEqual(python.directPostIds, ['parent']);

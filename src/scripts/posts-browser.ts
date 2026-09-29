@@ -34,6 +34,14 @@ function setupBrowser(root: HTMLElement) {
   const initialFolder = root.dataset.initialFolder!;
   const initialTags: string[] = JSON.parse(root.dataset.initialTags!).map(normalizeTag);
   const initialTitle = root.dataset.initialTitle!;
+  // 목록에 처음 들어왔고 주소에 폴더 지정이 없으면, 서버에서 펼쳐 둔 첫 폴더를 주소에도 반영합니다.
+  // 처음에 한 번만 처리하므로 이후 사용자가 폴더를 접으면 그대로 접힌 상태를 유지합니다.
+  // 글 주소나 특정 폴더로 바로 들어왔을 때는 해당 주소의 선택을 따릅니다.
+  const entryUrl = new URL(location.href);
+  if (!initialSlug && initialFolder && !entryUrl.searchParams.has('folder')) {
+    entryUrl.searchParams.set('folder', initialFolder);
+    history.replaceState(null, '', entryUrl);
+  }
   // folder: 열린 폴더 경로 / tag: 선택 태그 / slug: 오른쪽에 표시할 글.
   // 빈 문자열은 선택하지 않은 상태입니다.
   let state = { folder: '', tag: '', slug: '' };

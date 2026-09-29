@@ -1,7 +1,10 @@
 ---
 // Posts 메뉴를 처음 눌렀을 때 열리는 /posts/ 페이지입니다.
-// 선택한 글을 전달하지 않으므로 카테고리는 접혀 있고 오른쪽에는 안내가 나옵니다.
+// 첫 번째 최상위 카테고리만 펼치고, 오른쪽에는 글 선택 안내를 보여줍니다.
 // 두 열의 배치는 layouts/PostsLayout.astro, 모양은 styles/global.css에서 수정합니다.
 import PostsLayout from '../../layouts/PostsLayout.astro';
+import { categories } from '../../data/categories';
+// 배열의 첫 항목을 사용하므로 categories.ts에서 순서를 바꾸면 기본으로 열릴 폴더도 바뀝니다.
+const defaultFolder = categories[0]?.id ?? '';
 ---
-<PostsLayout />
+<PostsLayout folder={defaultFolder} />
