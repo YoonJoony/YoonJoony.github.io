@@ -1,0 +1,17 @@
+---
+import type { FolderNode } from '../lib/post-tree';
+import type { Post } from '../lib/posts';
+import { isAncestor } from '../lib/post-urls';
+import Icon from './Icon.astro';
+import PostCard from './PostCard.astro';
+interface Props { node: FolderNode; posts: Map<string, Post>; selectedSlug?: string; selectedFolder?: string; }
+const { node, posts, selectedSlug = '', selectedFolder = '' } = Astro.props;
+---
+<details class:list={['folder-node', { 'root-folder': node.depth === 0 }]} data-folder={node.id} open={isAncestor(node.id, selectedFolder)}>
+  <summary><span class="folder-chevron"><Icon name="chevron" size={14} /></span><Icon name="folder" size={19} /><span>{node.name}</span></summary>
+  <div class="folder-children">
+    {node.directPostIds.map((slug) => <PostCard post={posts.get(slug)!} variant="tree" selected={slug === selectedSlug} />)}
+    {node.children.map((child) => <Astro.self node={child} posts={posts} selectedSlug={selectedSlug} selectedFolder={selectedFolder} />)}
+    {node.directPostIds.length === 0 && node.children.length === 0 && <p class="folder-empty">아직 공개된 글이 없습니다.</p>}
+  </div>
+</details>

@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from 'astro:content';
+import PostsLayout from '../../layouts/PostsLayout.astro';
+import PostReader from '../../components/PostReader.astro';
+import { getPosts, legacySlug } from '../../lib/posts';
+import { site } from '../../data/site';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const legacy = await getCollection('legacy');
+  const legacySlugs = new Set(legacy.map(legacySlug));
+  for (const post of posts) if (legacySlugs.has(post.slug)) throw new Error('Slug conflicts with an archived URL: ' + post.slug);
+  return [
+    ...posts.map((post) => ({ params: { slug: post.slug }, props: { entry: post.entry, post, legacy: false } })),
+    ...legacy.map((entry) => ({ params: { slug: legacySlug(entry) }, props: { entry, post: null, legacy: true } })),
+  ];
+}
+const { entry, post, legacy } = Astro.props;
+const { Content } = await render(entry);
+const slug = post?.slug ?? legacySlug(entry as import('astro:content').CollectionEntry<'legacy'>);
+const image = post?.image ?? entry.data.heroImage ?? site.cover;
+---
+<PostsLayout title={entry.data.title + ' · YUN.LOG'} description={entry.data.description} image={image} slug={slug} folder={post?.folder} tags={post?.tags} legacy={legacy}>
+  <PostReader {...entry.data} image={image} tags={post?.tags} folder={post?.folder} categoryLabel={post?.categoryLabel}>
+    <Content />
+  </PostReader>
+</PostsLayout>

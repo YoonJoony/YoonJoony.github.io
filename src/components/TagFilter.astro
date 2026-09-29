@@ -1,0 +1,12 @@
+---
+import type { Post } from '../lib/posts';
+import { uniqueTags } from '../lib/tags';
+import { postsUrl } from '../lib/post-urls';
+interface Props { posts: Post[]; }
+const tags = uniqueTags(Astro.props.posts.flatMap((post) => post.tags)).sort((a,b) => a.label.localeCompare(b.label, 'en'));
+---
+<nav class="tag-filter" aria-label="태그로 글 필터">
+  <span class="filter-label">태그</span>
+  <a href="/posts/" class="tag is-active" data-filter-tag="" aria-current="true">전체</a>
+  {tags.map((tag) => <a href={postsUrl('', tag.id)} class="tag" data-filter-tag={tag.id}>{tag.label}</a>)}
+</nav>

@@ -1,17 +1,7 @@
 ---
-interface Props {
-	date: Date;
-}
-
+interface Props { date: Date; }
 const { date } = Astro.props;
+const formatted = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul' })
+  .formatToParts(date).filter((part) => ['year', 'month', 'day'].includes(part.type)).map((part) => part.value).join('.');
 ---
-
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		})
-	}
-</time>
+<time datetime={date.toISOString()}>{formatted}</time>

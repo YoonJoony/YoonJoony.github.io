@@ -7,7 +7,9 @@ import { defineConfig, fontProviders } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://Yoonjoony.github.io',
-	integrations: [mdx(), sitemap()],
+	trailingSlash: 'always',
+	integrations: [mdx(), sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/blog/') && !new URL(page).pathname.startsWith('/posts/archive-') && !page.endsWith('/404/') })],
+	markdown: { shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' }, defaultColor: 'dark' } },
 	fonts: [
 		{
 			provider: fontProviders.local(),

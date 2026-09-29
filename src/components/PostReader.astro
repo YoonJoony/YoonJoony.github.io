@@ -1,0 +1,24 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import FormattedDate from './FormattedDate.astro';
+import { uniqueTags } from '../lib/tags';
+import { postsUrl } from '../lib/post-urls';
+import '../styles/prose.css';
+interface Props {
+  title: string; description: string; pubDate: Date; updatedDate?: Date;
+  image: ImageMetadata; tags?: string[]; folder?: string; categoryLabel?: string;
+}
+const { title, description, pubDate, updatedDate, image, tags = [], folder = '', categoryLabel = '' } = Astro.props;
+---
+<article class="post-reader">
+  <header class="article-header">
+    {categoryLabel && <p class="breadcrumb">{categoryLabel}</p>}
+    <div class="article-dates"><FormattedDate date={pubDate} />{updatedDate && <span>수정 <FormattedDate date={updatedDate} /></span>}</div>
+    <h1 tabindex="-1">{title}</h1>
+    <ul class="tags" aria-label="글 태그">{uniqueTags(tags).map((tag) => <li><a class="tag" href={postsUrl(folder, tag.id)}>{tag.label}</a></li>)}</ul>
+    <Image src={image} alt="" widths={[640, 960, 1440]} sizes="(max-width: 900px) 100vw, 70vw" format="webp" loading="eager" class="article-cover" />
+    <p class="article-description">{description}</p>
+  </header>
+  <div class="prose"><slot /></div>
+</article>

@@ -1,0 +1,15 @@
+---
+import { Image } from 'astro:assets';
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+---
+<section class="profile-hero" aria-labelledby="profile-title">
+  <Image src={site.cover} alt="노트북과 노트가 놓인 공부 공간" widths={[480, 800]} sizes="(max-width: 700px) 100vw, 40vw" format="webp" loading="eager" fetchpriority="high" class="profile-photo" />
+  <div class="profile-copy">
+    <p class="eyebrow">{site.eyebrow}</p>
+    <h1 id="profile-title">{site.headline[0]}<br />{site.headline[1]}</h1>
+    <p class="profile-intro">{site.introduction}</p>
+    <ul class="interests">{site.interests.map((interest) => <li><Icon name={interest.icon} /><span>{interest.label}</span></li>)}</ul>
+    <a class="about-link" href="/about/">소개 더 보기</a>
+  </div>
+</section>

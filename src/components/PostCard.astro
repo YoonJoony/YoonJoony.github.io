@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import type { Post } from '../lib/posts';
+import { postsUrl } from '../lib/post-urls';
+import FormattedDate from './FormattedDate.astro';
+interface Props { post: Post; variant?: 'featured' | 'compact' | 'tree'; selected?: boolean; }
+const { post, variant = 'featured', selected = false } = Astro.props;
+const url = postsUrl('', '', post.slug);
+---
+<article class:list={['post-card', 'post-card--' + variant, { 'is-selected': selected }]}
+  data-post-card={variant === 'tree' ? post.slug : undefined}
+  data-folder-path={variant === 'tree' ? post.folder : undefined}
+  data-tags={variant === 'tree' ? JSON.stringify(post.tagItems.map((tag) => tag.id)) : undefined}>
+  <a class="post-image-link" href={url} tabindex="-1" aria-hidden="true" data-article-link>
+    <Image src={post.image} alt="" widths={[320, 640, 960]} sizes={variant === 'tree' ? '320px' : '(max-width: 700px) 100vw, 50vw'} format="webp" loading="lazy" />
+  </a>
+  <div class="post-copy">
+    {variant !== 'tree' && <div class="post-meta"><span>{post.categoryLabel}</span><FormattedDate date={post.pubDate} /></div>}
+    <h3><a href={url} data-article-link aria-current={selected ? 'page' : undefined}>{post.title}</a></h3>
+    <p class="post-description">{post.description}</p>
+    <ul class="tags" aria-label="글 태그">{post.tagItems.map((tag) => <li><a href={postsUrl(post.folder, tag.id)} class="tag">{tag.label}</a></li>)}</ul>
+  </div>
+</article>

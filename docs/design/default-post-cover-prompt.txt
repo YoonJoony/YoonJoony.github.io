@@ -1,0 +1,12 @@
+Generated with built-in image_gen. Temporary shared cover, 2026-09-29.
+Project asset: src/assets/default-post-cover.png
+Source articles use a copy at ../copy_folder/_assets/default-post-cover.png.
+Use as a temporary fallback for study and news cards; replace per article when real assets are provided.
+
+Use case: photorealistic-natural
+Asset type: temporary shared cover photograph for a Korean developer study blog and technology/news cards.
+Primary request: create one realistic editorial photograph of a quiet modern programmer's desk, with an unbranded open laptop showing softly out-of-focus code, a paper notebook and a simple charcoal ceramic cup. No people.
+Composition: landscape 16:9, usable for both wide horizontal cards and moderately cropped thumbnails; keep key objects toward the middle with comfortable margins.
+Lighting: soft natural window light, believable textures, subtle shadows, calm and understated.
+Color palette: neutral charcoal, gray, off-white, muted warm wood; no purple or neon blue lighting.
+Constraints: actual photographic scene only, no website layout, no typography or text overlay, no logos, no watermarks, no frame, no collage.

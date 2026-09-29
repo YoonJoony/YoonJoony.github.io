@@ -1,0 +1,20 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { site } from '../data/site';
+import { uniqueTags } from '../lib/tags';
+import FormattedDate from './FormattedDate.astro';
+interface Props { item: CollectionEntry<'news'>; }
+const { data } = Astro.props.item;
+---
+<article class="news-card">
+  <a href={data.sourceUrl} class="news-image" tabindex="-1" aria-hidden="true">
+    <Image src={data.heroImage ?? site.cover} alt="" widths={[480, 800]} sizes="(max-width: 700px) 100vw, 50vw" format="webp" />
+  </a>
+  <div class="news-copy">
+    <div class="post-meta"><span>{data.sourceName}</span><FormattedDate date={data.pubDate} /></div>
+    <h3><a href={data.sourceUrl}>{data.title}</a></h3>
+    <p>{data.description}</p>
+    <ul class="tags" aria-label="뉴스 태그">{uniqueTags(data.tags).map((tag) => <li><span class="tag">{tag.label}</span></li>)}</ul>
+  </div>
+</article>
