@@ -1,4 +1,7 @@
 ---
+// Posts 왼쪽의 폴더 하나를 그립니다. DE MAP도 Python도 같은 컴포넌트를 씁니다.
+// node는 폴더 정보, posts는 slug로 글을 찾는 표입니다.
+// selectedFolder는 현재 열린 경로이고, 그 위의 부모 폴더도 열어 둡니다.
 import type { FolderNode } from '../lib/post-tree';
 import type { Post } from '../lib/posts';
 import { isAncestor } from '../lib/post-urls';
@@ -7,10 +10,18 @@ import PostCard from './PostCard.astro';
 interface Props { node: FolderNode; posts: Map<string, Post>; selectedSlug?: string; selectedFolder?: string; }
 const { node, posts, selectedSlug = '', selectedFolder = '' } = Astro.props;
 ---
+{/* details는 접고 펼칠 수 있는 HTML 요소이고 summary가 클릭할 제목입니다.
+    open이 true이면 펼쳐집니다. 다른 분기를 접는 규칙은 posts-browser.ts에서 처리합니다. */}
 <details class:list={['folder-node', { 'root-folder': node.depth === 0 }]} data-folder={node.id} open={isAncestor(node.id, selectedFolder)}>
   <summary><span class="folder-chevron"><Icon name="chevron" size={14} /></span><Icon name="folder" size={19} /><span>{node.name}</span></summary>
+  {/* 들여쓰기의 기준입니다. global.css의 .folder-children에 단계별 여백이 있습니다.
+      폴더 안에 이 영역이 반복해서 들어가므로 깊어질 때마다 조금씩 오른쪽으로 이동합니다. */}
   <div class="folder-children">
+    {/* 이 폴더에 직접 들어 있는 글만 출력합니다. 하위 폴더 글을 여기서 다시 출력하지 않습니다.
+        posts.get(slug)!의 !는 TypeScript에 "이 값이 존재함을 확인했다"고 알려주는 표시입니다. */}
     {node.directPostIds.map((slug) => <PostCard post={posts.get(slug)!} variant="tree" selected={slug === selectedSlug} />)}
+    {/* Astro.self는 이 컴포넌트 자신을 다시 사용합니다(재귀).
+        자식 폴더도 같은 방식으로 그려서 폴더가 여러 단계여도 같은 규칙을 적용합니다. */}
     {node.children.map((child) => <Astro.self node={child} posts={posts} selectedSlug={selectedSlug} selectedFolder={selectedFolder} />)}
     {node.directPostIds.length === 0 && node.children.length === 0 && <p class="folder-empty">아직 공개된 글이 없습니다.</p>}
   </div>

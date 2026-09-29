@@ -1,4 +1,6 @@
 ---
+// Posts 오른쪽의 글: 분류 경로 → 날짜 → 제목 → 태그 → 대표 사진 → 소개 → 본문.
+// 제목·대표 사진 스타일은 global.css의 .article-*, 본문 스타일은 prose.css에서 수정합니다.
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import FormattedDate from './FormattedDate.astro';
@@ -13,6 +15,7 @@ const { title, description, pubDate, updatedDate, image, tags = [], folder = '',
 ---
 <article class="post-reader">
   <header class="article-header">
+    {/* 값 && 태그는 값이 있을 때만 해당 태그를 표시한다는 뜻입니다. */}
     {categoryLabel && <p class="breadcrumb">{categoryLabel}</p>}
     <div class="article-dates"><FormattedDate date={pubDate} />{updatedDate && <span>수정 <FormattedDate date={updatedDate} /></span>}</div>
     <h1 tabindex="-1">{title}</h1>
@@ -20,5 +23,7 @@ const { title, description, pubDate, updatedDate, image, tags = [], folder = '',
     <Image src={image} alt="" widths={[640, 960, 1440]} sizes="(max-width: 900px) 100vw, 70vw" format="webp" loading="eager" class="article-cover" />
     <p class="article-description">{description}</p>
   </header>
+  {/* 글 페이지가 넘긴 <Content />가 slot에 들어갑니다.
+      Markdown의 ## 제목, 표, 코드 블록 등은 prose.css가 꾸밉니다. */}
   <div class="prose"><slot /></div>
 </article>

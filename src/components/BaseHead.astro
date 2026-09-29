@@ -1,9 +1,13 @@
 ---
+// 브라우저 탭 제목, 검색·공유 정보, 공통 CSS를 설정합니다.
+// 눈에 보이는 헤더 메뉴는 Header.astro입니다.
+// global.css를 여기서 한 번 불러와 메인·Posts 등 공통 화면에 적용합니다.
 import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
 import { site } from '../data/site';
 interface Props { title: string; description: string; image?: ImageMetadata; noindex?: boolean; article?: boolean; }
 const { title, description, image = site.cover, noindex = false, article = false } = Astro.props;
+// 필터(?tag=...)가 달라도 검색에는 같은 글의 기본 주소로 알려줍니다.
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 ---
 <meta charset="utf-8" />
@@ -18,12 +22,15 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 {noindex && <meta name="robots" content="noindex,follow" />}
 <title>{title}</title>
 <meta name="description" content={description} />
+{/* og:*는 링크를 공유했을 때 사용할 제목·설명·대표 사진입니다. */}
 <meta property="og:type" content={article ? 'article' : 'website'} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={new URL(image.src, Astro.site)} />
 <meta name="twitter:card" content="summary_large_image" />
+{/* 저장한 테마를 화면이 그려지기 전에 적용합니다.
+    is:inline은 이 짧은 스크립트를 HTML의 현재 위치에 그대로 넣는 Astro 옵션입니다. */}
 <script is:inline>
   try {
     document.documentElement.dataset.theme = localStorage.getItem('yun-theme') === 'light' ? 'light' : 'dark';

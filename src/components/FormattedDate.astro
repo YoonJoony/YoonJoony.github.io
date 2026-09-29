@@ -1,7 +1,10 @@
 ---
+// 글의 날짜를 2026.09.29 형태로 표시하는 공통 부품입니다.
+// Intl.DateTimeFormat은 날짜 표시 도구이며, Asia/Seoul로 시간대를 통일합니다.
 interface Props { date: Date; }
 const { date } = Astro.props;
 const formatted = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'Asia/Seoul' })
   .formatToParts(date).filter((part) => ['year', 'month', 'day'].includes(part.type)).map((part) => part.value).join('.');
 ---
+{/* datetime은 기계가 읽는 날짜이고, 태그 안의 formatted는 사람이 보는 날짜입니다. */}
 <time datetime={date.toISOString()}>{formatted}</time>

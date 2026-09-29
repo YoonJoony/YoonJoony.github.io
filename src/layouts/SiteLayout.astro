@@ -1,9 +1,13 @@
 ---
+// 여러 페이지가 공유하는 가장 바깥 틀: 문서 정보 → 헤더 → 페이지 내용 → 푸터.
+// Header나 Footer를 바꾸면 메인·Posts뿐 아니라 이 틀을 쓰는 About 등에도 반영됩니다.
 import type { ImageMetadata } from 'astro';
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { site } from '../data/site';
+// Props는 이 컴포넌트가 받는 값의 형식입니다. ?가 붙은 값은 생략할 수 있습니다.
+// Astro.props에서 값을 꺼내고, = 뒤의 값은 전달되지 않았을 때 사용할 기본값입니다.
 interface Props { title?: string; description?: string; image?: ImageMetadata; noindex?: boolean; article?: boolean; class?: string; }
 const { title = site.name, description = site.description, image, noindex, article, class: className } = Astro.props;
 ---
@@ -11,8 +15,10 @@ const { title = site.name, description = site.description, image, noindex, artic
 <html lang="ko" data-theme="dark">
   <head><BaseHead title={title} description={description} image={image} noindex={noindex} article={article} /></head>
   <body class={className}>
+    {/* 키보드 사용자가 헤더를 건너뛰고 본문으로 바로 이동하는 링크입니다. */}
     <a class="skip-link" href="#main">본문으로 바로가기</a>
     <Header />
+    {/* 이 틀을 사용하는 페이지의 내용이 들어오는 자리입니다. */}
     <slot />
     <Footer />
   </body>

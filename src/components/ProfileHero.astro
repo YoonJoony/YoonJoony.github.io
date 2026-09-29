@@ -1,14 +1,21 @@
 ---
+// 메인 헤더 아래 소개 영역: 사진 + 두 줄 제목 + 관심 분야.
+// 내용은 data/site.ts, 사진 높이는 .profile-photo, 제목 크기는 .profile-copy h1에서 수정합니다.
 import { Image } from 'astro:assets';
 import { site } from '../data/site';
 import Icon from './Icon.astro';
 ---
 <section class="profile-hero" aria-labelledby="profile-title">
+  {/* Astro의 Image는 여러 크기의 최적화된 이미지를 만듭니다.
+      widths/sizes는 내려받을 이미지 선택용이고, 화면에서 보이는 크기는 CSS가 정합니다.
+      첫 화면 사진이라 eager와 fetchpriority로 일찍 불러옵니다. */}
   <Image src={site.cover} alt="노트북과 노트가 놓인 공부 공간" widths={[480, 800]} sizes="(max-width: 700px) 100vw, 40vw" format="webp" loading="eager" fetchpriority="high" class="profile-photo" />
   <div class="profile-copy">
     <p class="eyebrow">{site.eyebrow}</p>
+    {/* headline 배열의 두 문장을 br 태그로 줄을 나누어 보여줍니다. */}
     <h1 id="profile-title">{site.headline[0]}<br />{site.headline[1]}</h1>
     <p class="profile-intro">{site.introduction}</p>
+    {/* interests 배열에 항목을 추가하면 아이콘과 설명 한 줄이 추가됩니다. */}
     <ul class="interests">{site.interests.map((interest) => <li><Icon name={interest.icon} /><span>{interest.label}</span></li>)}</ul>
     <a class="about-link" href="/about/">소개 더 보기</a>
   </div>

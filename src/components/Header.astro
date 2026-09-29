@@ -1,6 +1,10 @@
 ---
+// 상단 로고, Blog·Posts·About 메뉴, 테마 버튼입니다.
+// 메뉴 이름·이동 주소는 links, 로고 문구는 data/site.ts의 name을 바꿉니다.
+// 높이·밑줄·메뉴 간격은 global.css의 .site-header와 .wordmark에 있습니다.
 import { site } from '../data/site';
 import Icon from './Icon.astro';
+// 현재 주소를 확인해서 사용자가 보고 있는 메뉴에 밑줄을 표시합니다.
 const path = Astro.url.pathname;
 const links = [{ label: 'Blog', href: '/' }, { label: 'Posts', href: '/posts/' }, { label: 'About', href: '/about/' }];
 ---
@@ -8,15 +12,18 @@ const links = [{ label: 'Blog', href: '/' }, { label: 'Posts', href: '/posts/' }
   <a class="wordmark" href="/" aria-label="YUN.LOG 홈">{site.name}</a>
   <nav aria-label="주 메뉴">
     {links.map(({ label, href }) => {
+      // /posts/글주소/에서도 Posts 메뉴를 선택 상태로 유지합니다.
       const current = href === '/' ? path === '/' : path.startsWith(href);
       return <a href={href} aria-current={current ? 'page' : undefined}>{label}</a>;
     })}
+    {/* aria-label은 버튼 설명, aria-pressed는 현재 선택 상태를 보조 기기에 알려줍니다. */}
     <button class="theme-toggle" type="button" aria-label="밝은 테마로 변경" aria-pressed="false" data-theme-toggle>
       <span class="theme-dot"></span><Icon name="moon" size={20} />
     </button>
   </nav>
 </header>
 <script>
+  // querySelector는 화면의 HTML 요소를 찾습니다. 여기서는 테마 버튼 하나를 찾습니다.
   const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
   function syncThemeButton() {
     const light = document.documentElement.dataset.theme === 'light';
@@ -26,7 +33,9 @@ const links = [{ label: 'Blog', href: '/' }, { label: 'Posts', href: '/posts/' }
   syncThemeButton();
   button?.addEventListener('click', () => {
     const theme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+    // <html data-theme="light">처럼 값을 바꾸면 global.css의 해당 색상이 적용됩니다.
     document.documentElement.dataset.theme = theme;
+    // localStorage에 저장하면 새로고침하거나 나중에 방문해도 선택한 테마가 유지됩니다.
     try { localStorage.setItem('yun-theme', theme); } catch {}
     syncThemeButton();
   });

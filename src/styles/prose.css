@@ -1,25 +1,40 @@
+/*
+ * Markdown 본문 전용 스타일입니다. PostReader.astro의 class="prose" 안에만 적용됩니다.
+ * 본문 ## → h2, ### → h3, 목록 → ul/ol, 코드 블록 → pre/code, 표 → table로 변환됩니다.
+ * 글 전체 제목과 대표 사진은 global.css의 .article-header / .article-cover에서 바꿉니다.
+ */
+/* 본문 기본 글자 크기와 줄 간격. em 단위는 각 요소의 글자 크기를 기준으로 계산됩니다. */
 .prose { font-size: 16px; line-height: 1.85; color: var(--text); overflow-wrap: anywhere; }
 .prose > :first-child { margin-top: 0; }
+/* 본문 소제목. margin은 제목 위아래 간격, h2의 border-bottom은 아래 구분선입니다. */
 .prose h1, .prose h2, .prose h3, .prose h4 { scroll-margin-top: 20px; letter-spacing: -.035em; margin: 1.5em 0 .7em; }
 .prose h1 { font-size: 1.9em; }
 .prose h2 { font-size: 1.6em; padding-bottom: .3em; border-bottom: 1px solid var(--line); }
 .prose h3 { font-size: 1.3em; }
 .prose h4 { font-size: 1.12em; }
+/* 문단·목록 간격입니다. 항목 안의 문단은 간격을 더 작게 잡습니다. */
 .prose p, .prose ul, .prose ol { margin: 0 0 1.15em; }
 .prose li > p { margin-bottom: .4em; }
 .prose li + li { margin-top: .3em; }
 .prose a { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--muted); }
 .prose a:hover { text-decoration-color: currentColor; }
+/* 여러 줄 코드 블록: overflow: auto로 긴 코드를 가로 스크롤하게 합니다.
+   바로 아래 :not(pre) > code는 문장 안에 넣은 짧은 코드에만 적용됩니다. */
 .prose pre { max-width: 100%; overflow: auto; padding: 18px 20px; border: 1px solid var(--line); border-radius: 5px; line-height: 1.7; font-size: 13px; margin: 1.2em 0 1.6em; tab-size: 2; }
 .prose :not(pre) > code { padding: .15em .4em; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; font-size: .85em; }
 .prose code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+/* Markdown에서 >로 시작한 인용문: 왼쪽 선과 배경을 줍니다. */
 .prose blockquote { border-left: 3px solid var(--tag-line); margin: 1.3em 0; padding: 10px 20px; color: var(--muted); background: var(--surface); }
 .prose blockquote p:last-child { margin-bottom: 0; }
+/* 칸이 많은 표는 페이지를 늘리는 대신 표 안에서 가로로 스크롤됩니다. */
 .prose table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin-block: 1.4em; font-size: .9em; }
 .prose th, .prose td { border: 1px solid var(--line); padding: 10px 14px; text-align: left; min-width: 95px; }
 .prose th { background: var(--surface); }
+/* 본문 사진은 글 영역보다 넓어지지 않도록 제한합니다. */
 .prose img { width: auto; max-width: 100%; margin: 1.5em auto; border-radius: 4px; }
 .prose hr { margin-block: 2em; border: 0; border-top: 1px solid var(--line); }
+/* 밝은 테마에서는 Astro가 만든 코드 강조 색상도 밝은 색상표로 바꿉니다. */
 :root[data-theme="light"] .astro-code,
 :root[data-theme="light"] .astro-code span { color: var(--shiki-light) !important; background-color: var(--shiki-light-bg) !important; }
+/* 모바일 본문과 코드의 글자 크기입니다. */
 @media (max-width: 700px) { .prose { font-size: 15px; } .prose pre { padding: 14px; font-size: 12px; } }

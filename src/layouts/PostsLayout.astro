@@ -1,4 +1,7 @@
 ---
+// Posts의 실제 화면 틀: 위쪽 태그 / 왼쪽 카테고리·카드 / 오른쪽 글.
+// 좌우 비율과 간격: global.css의 .posts-workspace, .posts-sidebar, .reader-pane.
+// 클릭 동작: scripts/posts-browser.ts. Markdown 본문 모양: PostReader.astro와 prose.css.
 import SiteLayout from './SiteLayout.astro';
 import TagFilter from '../components/TagFilter.astro';
 import CategoryNode from '../components/CategoryNode.astro';
@@ -10,19 +13,29 @@ import type { ImageMetadata } from 'astro';
 interface Props { title?: string; description?: string; image?: ImageMetadata; slug?: string; folder?: string; tags?: string[]; legacy?: boolean; }
 const { title = 'Posts · YUN.LOG', description, image, slug = '', folder = '', tags = [], legacy = false } = Astro.props;
 const posts = await getPosts();
+// 글 목록을 폴더 안에 하위 폴더가 있는 구조로 바꿉니다.
+// postMap은 slug로 글을 바로 찾는 표입니다. 예: postMap.get('python-study01').
 const tree = buildPostTree(posts);
 const postMap = new Map(posts.map((post) => [post.slug, post]));
 ---
 <SiteLayout title={title} description={description} image={image} noindex={legacy} article={!!slug} class="posts-page">
+  {/* data-*는 화면에 표시되는 문구가 아니라 JavaScript에 전달할 정보입니다.
+      posts-browser.ts가 이 속성을 읽으므로 이름을 바꿀 때는 두 파일을 함께 수정하세요. */}
   <main id="main" class="container posts-main" data-posts-browser data-initial-slug={slug} data-initial-folder={folder} data-initial-tags={JSON.stringify(tags)} data-initial-title={title}>
     <h1 class="sr-only">Posts 글 탐색</h1>
+    {/* 공개 글의 태그로 필터 줄을 만듭니다. */}
     <TagFilter posts={posts} />
+    {/* !!slug는 글 선택 여부를 true/false로 바꿉니다.
+        class:list는 조건이 참일 때만 has-article 같은 CSS 이름을 붙입니다. */}
     <div class:list={['posts-workspace', { 'has-article': !!slug }]}>
+      {/* 왼쪽: 각 최상위 폴더를 CategoryNode로 그립니다. */}
       <aside class="posts-sidebar" aria-label="카테고리와 글 목록" tabindex="-1">
         {tree.map((node) => <CategoryNode node={node} posts={postMap} selectedSlug={slug} selectedFolder={folder} />)}
         <p class="filter-empty" data-filter-empty hidden>이 폴더에는 선택한 태그의 글이 없습니다.</p>
         <p class="sr-only" role="status" data-filter-status></p>
       </aside>
+      {/* 오른쪽: 글을 골랐으면 slot의 본문, 아직 고르지 않았으면 reader-empty 안내.
+          hidden 값이 true이면 숨깁니다. 모바일에서는 목록과 본문을 번갈아 보여줍니다. */}
       <section class="reader-pane" aria-label="선택한 글" tabindex="-1">
         <div class="reader-selection" data-reader-selection hidden={!slug}>
           <a class="mobile-back" href={postsUrl(folder)} data-reader-back>목록으로 돌아가기</a>
@@ -37,6 +50,7 @@ const postMap = new Map(posts.map((post) => [post.slug, post]));
       </section>
     </div>
   </main>
+  {/* 이 script는 방문자의 브라우저에서 실행됩니다. 폴더·태그 클릭을 처리합니다. */}
   <script>
     import '../scripts/posts-browser';
   </script>

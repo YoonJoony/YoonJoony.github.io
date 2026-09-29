@@ -1,23 +1,33 @@
 ---
+// 같은 글 카드 부품을 세 곳에서 재사용합니다.
+// variant: featured = 메인의 큰 카드, compact = 메인의 작은 카드, tree = Posts 왼쪽 카드.
+// global.css의 .post-card는 공통, .post-card--compact처럼 뒤에 붙는 이름은 특정 형태의 스타일입니다.
 import { Image } from 'astro:assets';
 import type { Post } from '../lib/posts';
 import { postsUrl } from '../lib/post-urls';
 import FormattedDate from './FormattedDate.astro';
+// post는 표시할 글 데이터, selected는 현재 읽고 있는 글인지 알려주는 값입니다.
 interface Props { post: Post; variant?: 'featured' | 'compact' | 'tree'; selected?: boolean; }
 const { post, variant = 'featured', selected = false } = Astro.props;
 const url = postsUrl('', '', post.slug);
 ---
+{/* 선택한 카드에 is-selected를 붙여 테두리를 강조합니다.
+    data-*는 Posts의 필터·글 선택 스크립트가 카드 정보를 읽는 연결점입니다. */}
 <article class:list={['post-card', 'post-card--' + variant, { 'is-selected': selected }]}
   data-post-card={variant === 'tree' ? post.slug : undefined}
   data-folder-path={variant === 'tree' ? post.folder : undefined}
   data-tags={variant === 'tree' ? JSON.stringify(post.tagItems.map((tag) => tag.id)) : undefined}>
+  {/* 사진과 제목 모두 같은 글로 이동합니다. 제목 링크가 있으므로 사진 링크는
+      tabindex=-1, aria-hidden으로 키보드·보조 기기의 중복 탐색을 줄입니다. */}
   <a class="post-image-link" href={url} tabindex="-1" aria-hidden="true" data-article-link>
     <Image src={post.image} alt="" widths={[320, 640, 960]} sizes={variant === 'tree' ? '320px' : '(max-width: 700px) 100vw, 50vw'} format="webp" loading="lazy" />
   </a>
   <div class="post-copy">
+    {/* 왼쪽 트리 카드에서는 공간을 아끼기 위해 분류 경로와 날짜를 생략합니다. */}
     {variant !== 'tree' && <div class="post-meta"><span>{post.categoryLabel}</span><FormattedDate date={post.pubDate} /></div>}
     <h3><a href={url} data-article-link aria-current={selected ? 'page' : undefined}>{post.title}</a></h3>
     <p class="post-description">{post.description}</p>
+    {/* 제목을 누르면 글 본문, 태그를 누르면 해당 폴더의 태그 필터로 이동합니다. */}
     <ul class="tags" aria-label="글 태그">{post.tagItems.map((tag) => <li><a href={postsUrl(post.folder, tag.id)} class="tag">{tag.label}</a></li>)}</ul>
   </div>
 </article>

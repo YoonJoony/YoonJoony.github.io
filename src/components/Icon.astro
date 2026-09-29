@@ -1,4 +1,7 @@
 ---
+// 사진 파일 대신 선으로 그리는 SVG 아이콘입니다.
+// 사용하는 곳에서 name="folder"처럼 종류를 고르고, size={24}처럼 크기를 바꿉니다.
+// paths의 문자열은 선을 그리는 좌표입니다. 크기 수정에는 이 좌표를 바꿀 필요가 없습니다.
 interface Props { name: string; size?: number; }
 const { name, size = 20 } = Astro.props;
 const paths: Record<string, string> = {
@@ -11,4 +14,6 @@ const paths: Record<string, string> = {
   sun: 'M12 3V1m0 22v-2M3 12H1m22 0h-2M5 5 3 3m18 18-2-2M5 19l-2 2M21 3l-2 2M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
 };
 ---
+{/* currentColor는 주변 글자색을 따릅니다. stroke-width는 선 굵기입니다.
+    장식 아이콘은 aria-hidden으로 보조 기기가 중복해서 읽지 않도록 합니다. */}
 <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={paths[name] ?? paths.note} /></svg>

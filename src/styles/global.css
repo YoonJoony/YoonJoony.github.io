@@ -1,3 +1,16 @@
+/*
+ * 메인·Posts 화면의 색상, 크기, 배치를 바꾸는 공통 스타일입니다.
+ * 빠르게 찾기: 소개 .profile-hero / 최근 글 .recent-grid / 뉴스 .news-card
+ * Posts 좌우 배치 .posts-workspace / 폴더 .folder-node / 카드 .post-card--tree
+ * Markdown 본문의 제목·문단·코드·표는 별도 파일 prose.css에서 바꿉니다.
+ *
+ * CSS 읽기: .이름은 HTML의 class, #이름은 id를 가리킵니다.
+ * margin은 바깥 여백, padding은 안쪽 여백, gap은 요소 사이 간격입니다.
+ * px는 길이 단위, fr은 grid가 쓸 수 있는 공간을 나누는 비율입니다.
+ * 아래쪽 @media는 화면 너비별 규칙입니다. 모바일도 바꾸려면 함께 확인하세요.
+ */
+/* 공통 색상표. --bg는 배경, --text는 글자, --muted는 보조 글자, --line은 구분선입니다.
+   var(--bg)처럼 불러 쓰므로 여기서 바꾸면 여러 화면에 함께 반영됩니다. */
 :root {
   color-scheme: dark;
   --bg: #181818; --surface: #242424; --surface-hover: #2d2d2d;
@@ -5,12 +18,14 @@
   --tag-line: #616161; --active-bg: #eeeeec; --active-text: #202020;
   --font: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
 }
+/* 밝은 테마의 색상표. 헤더 버튼이 html의 data-theme을 바꾸면 이 값들이 적용됩니다. */
 :root[data-theme="light"] {
   color-scheme: light;
   --bg: #fafaf8; --surface: #efefec; --surface-hover: #e5e5e0;
   --text: #202020; --muted: #62625f; --line: #d7d7d0;
   --tag-line: #b5b5ad; --active-bg: #252525; --active-text: #ffffff;
 }
+/* 기본 설정: border-box는 지정한 너비 안에 안쪽 여백과 테두리까지 포함합니다. */
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scrollbar-gutter: stable; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
@@ -23,59 +38,85 @@ svg { flex-shrink: 0; vertical-align: middle; }
 h1,h2,h3,p { margin: 0; }
 h1,h2,h3 { line-height: 1.35; overflow-wrap: anywhere; }
 a,button,summary { -webkit-tap-highlight-color: transparent; }
+/* 키보드 Tab으로 이동한 위치를 표시합니다. hidden은 스크립트가 숨기는 요소에 사용합니다. */
 :focus-visible { outline: 2px solid var(--text); outline-offset: 5px; border-radius: 3px; }
 [hidden] { display: none !important; }
 ::selection { background: var(--active-bg); color: var(--active-text); }
+/* 전체 폭: 최대 1280px, 그보다 좁으면 좌우 각각 40px 여백을 둡니다.
+   헤더와 본문이 이 클래스를 함께 사용하므로 양쪽 끝이 같은 선에 맞습니다.
+   margin-inline: auto는 남은 가로 공간을 양쪽에 나눠 가운데에 놓습니다. */
 .container { width: min(1280px, calc(100% - 80px)); margin-inline: auto; }
+/* 화면에는 숨기되 스크린리더로 읽을 수 있는 설명입니다.
+   skip-link는 키보드로 선택했을 때만 보이는 '본문으로 바로가기' 링크입니다. */
 .sr-only { position: absolute; top: 0; left: 0; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .skip-link { position: fixed; top: 12px; left: 20px; z-index: 100; background: var(--text); color: var(--bg); padding: 10px 20px; clip-path: inset(100%); }
 .skip-link:focus { clip-path: none; }
+/* [공통 헤더] 높이는 min-height, 로고 크기는 .wordmark, 메뉴 간격은 nav의 gap입니다. */
 .site-header { display: flex; align-items: center; justify-content: space-between; min-height: 88px; border-bottom: 1px solid var(--line); gap: 20px; }
 .wordmark { font-size: 25px; font-weight: 500; letter-spacing: -.8px; white-space: nowrap; }
 .site-header nav { display: flex; align-items: center; gap: 34px; }
 .site-header nav > a { position: relative; padding-block: 6px; }
+/* 현재 메뉴 아래의 선. ::after는 HTML 태그를 추가하지 않고 장식 요소를 그립니다. */
 .site-header nav > a[aria-current]::after { content: ''; height: 1px; background: currentColor; position: absolute; bottom: 0; inset-inline: 0; }
 .site-header nav > a:hover { color: var(--muted); }
+/* 헤더 오른쪽 테마 버튼: 둥근 배경, 원, 달 아이콘을 배치합니다. */
 .theme-toggle { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #f6f6f4; color: #181818; border: 0; padding: 6px 9px; border-radius: 30px; width: 76px; height: 36px; }
 .theme-dot { width: 21px; height: 21px; background: #181818; border-radius: 50%; }
 [data-theme="light"] .theme-dot { background: transparent; box-shadow: inset 0 0 0 1.5px #181818; }
 [data-theme="light"] .theme-toggle svg { fill: #181818; }
+/* [공통 푸터] 위쪽 구분선, 저작권과 링크 사이 간격을 조절합니다. */
 .site-footer { min-height: 112px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 14px; }
 .site-footer nav { display: flex; gap: 24px; }
+/* [메인 1: 소개] 두 열을 약 39:61로 나눕니다. gap은 사진과 설명 사이 거리입니다.
+   margin의 40px은 위, 0은 좌우, 52px은 아래 여백입니다. */
 .profile-hero { margin: 40px 0 52px; display: grid; grid-template-columns: minmax(0, .39fr) minmax(0, .61fr); gap: 34px; align-items: center; }
+/* 소개 사진의 세로 길이는 height. object-fit: cover는 칸을 채우도록 일부를 잘라 보여줍니다. */
 .profile-photo { width: 100%; height: 278px; object-fit: cover; }
 .eyebrow { font-size: 12px; font-weight: 500; letter-spacing: .02em; color: var(--muted); margin-bottom: 10px; }
+/* 소개 제목 크기: clamp(최소, 화면에 따른 값, 최대). 여기서는 26~36px 범위입니다.
+   line-height는 줄 간격, letter-spacing은 글자 사이 간격입니다. */
 .profile-copy h1 { font-size: clamp(26px, 2.6vw, 36px); line-height: 1.28; letter-spacing: -.045em; font-weight: 700; }
 .profile-intro { font-size: 16px; color: var(--muted); margin-top: 12px; }
 .interests { list-style: none; margin: 17px 0 12px; padding: 0; display: grid; gap: 6px; }
 .interests li { display: flex; align-items: center; gap: 15px; font-size: 15px; }
 .about-link { font-size: 14px; font-weight: 600; text-underline-offset: 5px; }
 .about-link:hover, .text-link:hover { text-decoration: underline; }
+/* Recent blog posts와 News Research의 제목 크기 및 제목 아래 여백입니다. */
 .section-title { font-size: 25px; font-weight: 600; margin-bottom: 24px; letter-spacing: -.035em; }
+/* [메인 2: 최근 글] 왼쪽 큰 카드와 오른쪽 작은 카드 묶음의 폭을 나눕니다.
+   .recent-side의 gap은 오른쪽 두 카드 사이의 세로 간격입니다. */
 .recent-grid { display: grid; grid-template-columns: minmax(0, 1.03fr) minmax(0, 1fr); gap: 28px; }
 .recent-side { display: grid; gap: 24px; align-content: start; }
+/* [공통 글 카드] 아래 기본 스타일은 메인과 Posts 왼쪽 카드에 함께 적용됩니다. */
 .post-card { min-width: 0; }
 .post-image-link { display: block; overflow: hidden; }
+/* aspect-ratio는 가로/세로 비율입니다. 같은 가로폭에서 숫자가 클수록 사진이 납작해집니다. */
 .post-image-link img { width: 100%; object-fit: cover; aspect-ratio: 2.2; transition: opacity .18s; }
 .post-image-link:hover img { opacity: .85; }
+/* 카드의 분류 경로와 날짜. 긴 분류 경로는 말줄임표, 날짜는 한 줄로 표시합니다. */
 .post-meta { font-size: 12px; color: var(--muted); display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 13px 0 7px; }
 .post-meta span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .post-meta time { white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 .post-card h3 { font-size: 20px; font-weight: 650; letter-spacing: -.03em; }
 .post-card h3 a:hover { text-decoration: underline; text-underline-offset: 4px; }
+/* 카드 소개는 최대 두 줄로 표시합니다. -webkit-line-clamp 숫자로 줄 수를 바꿀 수 있습니다. */
 .post-description { font-size: 14px; color: var(--muted); margin: 9px 0 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+/* 태그 칩: gap은 칩 사이, padding은 칩 안쪽 여백입니다. flex-wrap으로 다음 줄을 허용합니다. */
 .tags { margin: 0; padding: 0; list-style: none; display: flex; gap: 7px; flex-wrap: wrap; }
 .tag { border: 1px solid var(--tag-line); border-radius: 30px; color: var(--text); display: inline-flex; align-items: center; justify-content: center; min-height: 28px; padding: 2px 12px; font-size: 12px; line-height: 1.5; background: var(--surface); white-space: nowrap; }
 a.tag:hover { background: var(--surface-hover); }
+/* [메인의 작은 카드] 사진과 내용을 한 줄에 놓습니다. 공통 카드 스타일 위에 덮어씁니다. */
 .post-card--compact { display: grid; grid-template-columns: minmax(135px, .43fr) minmax(0, .57fr); gap: 18px; align-items: start; }
 .post-card--compact .post-image-link img { aspect-ratio: 1.45; }
 .post-card--compact .post-meta { margin-top: 0; font-size: 11px; gap: 5px; flex-wrap: wrap; }
 .post-card--compact h3 { font-size: 17px; }
 .post-card--compact .post-description { font-size: 12px; margin: 7px 0 9px; -webkit-line-clamp: 1; }
 .post-card--compact .tag { font-size: 11px; min-height: 25px; padding: 1px 10px; }
+/* [메인 3: 뉴스] 최근 글과의 구분선·간격, 각 뉴스의 사진/내용 비율을 조절합니다. */
 .news-section { border-top: 1px solid var(--line); margin-top: 38px; padding-top: 34px; margin-bottom: 34px; }
 .news-card { display: grid; grid-template-columns: minmax(0, .49fr) minmax(0, .51fr); gap: 28px; align-items: center; padding: 20px 0; }
 .news-card:first-child { padding-top: 0; }
+/* 앞에 다른 뉴스 카드가 있는 카드에만 선을 넣어 첫 카드 위의 중복 선을 피합니다. */
 .news-card + .news-card { border-top: 1px solid var(--line); }
 .news-card img { width: 100%; aspect-ratio: 2.55; object-fit: cover; }
 .news-copy .post-meta { margin-top: 0; justify-content: flex-start; }
@@ -84,14 +125,19 @@ a.tag:hover { background: var(--surface-hover); }
 .news-copy a:hover { text-decoration: underline; }
 .news-empty img { filter: grayscale(1); opacity: .72; }
 .empty-message { padding: 36px 0; color: var(--muted); }
+/* [Posts 1: 태그 줄] 칩이 많으면 가로로 스크롤됩니다. */
 .tag-filter { display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); padding: 20px 0; overflow-x: auto; }
 .filter-label { margin-right: 12px; flex-shrink: 0; font-size: 14px; }
 .tag-filter .tag { font-size: 14px; min-height: 34px; padding-inline: 18px; }
 .tag-filter .is-active { background: var(--active-bg); color: var(--active-text); border-color: var(--active-bg); }
+/* [Posts 2: 좌우 배치] 약 31:69 비율. 왼쪽은 최소 275px을 확보합니다.
+   sidebar는 목록, reader-pane은 본문입니다. overflow: auto로 각각 따로 스크롤합니다.
+   901px 이상에서 최종 높이는 아래 @media 규칙이 남은 화면 높이에 맞춥니다. */
 .posts-workspace { display: grid; grid-template-columns: minmax(275px, .31fr) minmax(0, .69fr); height: calc(100dvh - 246px); min-height: 480px; margin: 28px 0 24px; }
 .posts-sidebar { border-right: 1px solid var(--line); overflow: auto; padding-right: 20px; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
 .reader-pane { overflow: auto; padding: 0 8px 28px 38px; scrollbar-width: thin; scrollbar-color: var(--line) transparent; min-width: 0; }
 .posts-page .site-footer { min-height: 72px; }
+/* [Posts 3: 폴더] summary가 클릭하는 폴더 이름입니다. [open]은 펼쳐진 폴더를 가리킵니다. */
 .folder-node summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; padding: 9px 6px; border-radius: 5px; line-height: 1.55; font-size: 14px; }
 .folder-node summary::-webkit-details-marker { display: none; }
 .folder-node summary:hover { background: var(--surface); }
@@ -101,17 +147,25 @@ a.tag:hover { background: var(--surface-hover); }
 .root-folder[open] > summary { background: transparent; }
 .folder-chevron { display: flex; align-items: center; }
 .folder-node[open] > summary .folder-chevron { transform: rotate(90deg); }
+/* 폴더 깊이별 들여쓰기. 영역이 중첩될 때마다 바깥/안쪽 여백 12px씩 추가됩니다.
+   값이 커지면 하위 폴더와 그 안의 카드가 더 오른쪽으로 이동합니다.
+   카드에 깊이만큼의 여백을 또 주면 중복되므로 이곳에서 조절하세요. */
 .folder-children { margin-left: 12px; padding-left: 12px; border-left: 1px solid var(--line); }
 .folder-empty, .filter-empty { padding: 12px 8px; color: var(--muted); font-size: 13px; }
+/* [Posts 4: 왼쪽 글 카드] 테두리·내부 여백·사진 비율을 조절합니다.
+   .is-selected는 현재 읽고 있는 글의 테두리와 배경을 강조합니다. */
 .post-card--tree { border: 1px solid var(--line); border-radius: 5px; padding: 10px; margin: 6px 0 10px; min-width: 190px; }
 .post-card--tree.is-selected { border-color: var(--muted); background: var(--surface); }
 .post-card--tree h3 { font-size: 14px; margin-top: 9px; }
 .post-card--tree .post-image-link img { aspect-ratio: 2.3; }
 .post-card--tree .post-description { font-size: 12px; margin: 6px 0 9px; }
 .post-card--tree .tag { min-height: 25px; font-size: 11px; padding: 2px 9px; }
+/* 아직 글을 고르지 않았을 때 오른쪽 중앙에 나오는 안내입니다. */
 .reader-empty { height: 100%; min-height: 350px; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; gap: 18px; color: var(--muted); }
 .reader-empty h2 { color: var(--text); font-size: 23px; letter-spacing: -.03em; }
 .reader-empty p { font-size: 14px; line-height: 1.85; }
+/* [Posts 5: 본문 윗부분] 분류 경로·날짜·제목·대표 사진·소개입니다.
+   실제 Markdown 본문의 글꼴과 코드 블록은 prose.css에서 조절하세요. */
 .breadcrumb { color: var(--muted); font-size: 13px; margin-bottom: 15px; overflow-wrap: anywhere; }
 .article-dates { color: var(--muted); display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; }
 .article-header h1 { font-size: clamp(28px, 3vw, 40px); line-height: 1.25; letter-spacing: -.05em; margin: 13px 0 17px; }
@@ -130,15 +184,20 @@ a.tag:hover { background: var(--surface-hover); }
 .not-found { padding-block: 100px; min-height: 65vh; }
 .not-found p { margin-block: 15px; color: var(--muted); }
 
+/* [화면 너비별 조정] 조건에 맞으면 위의 같은 속성을 덮어씁니다.
+   큰 화면에서는 소개 사진의 가로폭을 420px로 고정합니다. */
 @media (min-width: 1500px) {
   .profile-hero { grid-template-columns: 420px 1fr; }
 }
+/* 데스크톱 Posts: 화면 높이(100dvh) 안에 헤더·태그·본문·푸터를 배치합니다.
+   flex: 1은 남은 공간을 채우고, min-height: 0은 긴 본문이 틀을 밀어내지 않게 합니다. */
 @media (min-width: 901px) {
   .posts-page { height: 100dvh; display: flex; flex-direction: column; }
   .posts-page .site-header, .posts-page .site-footer, .posts-page .tag-filter { flex-shrink: 0; }
   .posts-main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
   .posts-workspace { flex: 1; height: auto; min-height: 0; }
 }
+/* 조금 좁은 화면: 양쪽 여백과 카드 글 정보를 줄여 공간을 확보합니다. */
 @media (max-width: 1100px) {
   .container { width: calc(100% - 56px); }
   .post-card--compact { gap: 13px; }
@@ -147,6 +206,8 @@ a.tag:hover { background: var(--surface-hover); }
   .post-card--compact .tags { margin-top: 12px; }
   .reader-pane { padding-left: 25px; }
 }
+/* 태블릿·모바일 Posts: 목록 또는 본문 하나를 보여줍니다.
+   has-article은 posts-browser.ts가 붙이는 클래스입니다. 목록 복귀 링크도 여기서 나타납니다. */
 @media (max-width: 900px) {
   .posts-workspace { display: block; height: auto; min-height: 65vh; margin-top: 20px; }
   .posts-sidebar { border: 0; padding-right: 0; overflow: visible; }
@@ -157,6 +218,8 @@ a.tag:hover { background: var(--surface-hover); }
   .mobile-back { display: inline-block; border-bottom: 1px solid var(--tag-line); font-size: 14px; color: var(--muted); margin-bottom: 25px; }
   .article-header h1 { font-size: clamp(28px, 4.8vw, 38px); }
 }
+/* 작은 화면의 메인: 소개·최근 글·뉴스를 세로로 배치하고 글자 크기와 여백을 줄입니다.
+   위에서 값을 바꿔도 이곳에 같은 속성이 있으면 모바일에는 이 값이 적용됩니다. */
 @media (max-width: 700px) {
   .container { width: calc(100% - 40px); }
   .site-header { min-height: 76px; gap: 12px; }
@@ -193,10 +256,12 @@ a.tag:hover { background: var(--surface-hover); }
   .about-grid { grid-template-columns: 1fr; gap: 30px; margin-top: 30px; }
   .article-cover { aspect-ratio: 1.8; }
 }
+/* 기기에서 움직임 줄이기를 선택한 사용자는 부드러운 스크롤·전환 효과를 끕니다. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   * { transition: none !important; }
 }
+/* 아주 좁은 화면에서도 헤더 메뉴가 한 줄에 들어가도록 간격을 줄입니다. */
 @media (max-width: 380px) {
   .site-header nav { gap: 10px; }
   .wordmark { font-size: 18px; }
