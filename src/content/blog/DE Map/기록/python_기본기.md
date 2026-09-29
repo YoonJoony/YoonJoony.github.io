@@ -4,7 +4,7 @@ description: "DE 입문에 기본이 되는 파이썬 공부 방향을 AI로 요
 pubDate: 2026-09-23
 slug: python-study-roadmap
 tags: [Python, Study]
-heroImage: ../../../../assets/default-post-cover.png
+heroImage: ../../../../assets/slide-drift.gif
 draft: false
 ---
 

@@ -5,7 +5,7 @@ import { z } from 'astro/zod';
 const blog = defineCollection({
   loader: glob({
     base: './src/content/blog',
-    pattern: ['DE Map/**/*.{md,mdx}', 'BE Map/**/*.{md,mdx}', 'Project Map/**/*.{md,mdx}'],
+    pattern: ['DE Map/**/*.{md,mdx}', 'BE Map/**/*.{md,mdx}', 'Project Map/**/*.{md,mdx}', 'Blog/**/*.{md,mdx}'],
     // Separate file identity from the public URL so duplicate slugs can be detected.
     generateId: ({ entry }) => entry.normalize('NFC').replace(/\.(md|mdx)$/, ''),
   }),

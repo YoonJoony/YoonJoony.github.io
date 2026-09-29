@@ -4,7 +4,6 @@ description: "데이터 엔지니어 공부 방향 간략"
 pubDate: 2026-09-21
 slug: de-map
 tags: [DE, Study, AI]
-heroImage: ../../../../assets/default-post-cover.png
 draft: false
 ---
 

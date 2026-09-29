@@ -83,6 +83,10 @@ a,button,summary { -webkit-tap-highlight-color: transparent; }
 .about-link:hover, .text-link:hover { text-decoration: underline; }
 /* Recent blog posts와 News Research의 제목 크기 및 제목 아래 여백입니다. */
 .section-title { font-size: 25px; font-weight: 600; margin-bottom: 24px; letter-spacing: -.035em; }
+/* 최신 글 제목: 아이콘과 글자를 세로 가운데에 맞춥니다. gap은 둘 사이의 간격입니다. */
+.recent-title { display: flex; align-items: center; gap: 10px; }
+/* 아이콘 크기는 width와 height를 함께 바꾸세요. flex-shrink: 0은 좁은 화면에서도 크기를 유지합니다. */
+.recent-title-icon { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
 /* [메인 2: 최근 글] 왼쪽 큰 카드와 오른쪽 작은 카드 묶음의 폭을 나눕니다.
    .recent-side의 gap은 오른쪽 두 카드 사이의 세로 간격입니다. */
 .recent-grid { display: grid; grid-template-columns: minmax(0, 1.03fr) minmax(0, 1fr); gap: 28px; }

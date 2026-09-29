@@ -9,7 +9,7 @@ import { site } from '../data/site';
     <p class="eyebrow">ABOUT YUN.LOG</p>
     <h1>배우고, 만들고,<br />기록합니다.</h1>
     <div class="about-grid">
-      <Image src={site.cover} alt="개발과 공부를 위한 책상" widths={[480, 960]} sizes="(max-width: 700px) 100vw, 50vw" format="webp" />
+      <Image src={site.me} alt="개발과 공부를 위한 책상" widths={[480, 960]} sizes="(max-width: 700px) 100vw, 50vw" format="webp" />
       <div><h2>백엔드에서 데이터까지</h2><p>{site.introduction}</p>
         <ul class="interests">{site.interests.map((item) => <li><Icon name={item.icon} /><span>{item.label}</span></li>)}</ul>
         <p>이곳에는 직접 공부한 내용, 프로젝트를 만들며 내린 선택, 문제를 해결한 과정을 차곡차곡 남깁니다.</p>

@@ -1,10 +1,10 @@
 ---
 title: "AI 관련 주요 메모"
 description: "어디선가 줏어온 AI 관련 메모입니다."
-pubDate: 2026-09-23
+pubDate: 2026-09-27
 slug: ai-memo
 tags: [Python, Study]
-heroImage: ../../../../assets/default-post-cover.png
+heroImage: ../../../../assets/blog-robot.gif
 draft: false
 ---
 
