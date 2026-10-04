@@ -24,7 +24,7 @@ import PythonPlayground from '../../../../../components/PythonPlayground.astro';
 
 <PythonPlayground
   title="CSV 읽기"
-  code={`import pandas as pd
+  code={String.raw`import pandas as pd
 df = pd.read_csv("/data/python-visualization/study-hours.csv")
 df`}
   datasets={[{ path: '/data/python-visualization/study-hours.csv', label: '공부 시간 CSV' }]}
@@ -32,7 +32,32 @@ df`}
 ```
 
 위 import 경로는 예제 글과 같은 깊이의 폴더 기준입니다. 파일을 다른 깊이로 옮기면 `../` 개수를 맞추세요.
-코드에 JavaScript 템플릿 문자열 문법인 백틱이나 `${...}`가 있다면 각각 `\``와 `\${...}`로 이스케이프해야 합니다.
+Python 코드를 백틱으로 감쌀 때는 앞에 **`String.raw`를 붙이세요.**
+일반 백틱은 Python 코드의 `\n`, `\t` 같은 문자를 JavaScript 단계에서 먼저 해석합니다.
+예를 들어 `print("첫째 줄\n둘째 줄")`의 `\n`이 실제 줄바꿈으로 바뀌면, Python은 따옴표가 닫히지 않았다는 오류를 냅니다.
+`String.raw`를 쓰면 이 문자가 그대로 Python에 전달되어 정상적으로 처리됩니다.
+
+```mdx
+export const code = String.raw`
+year = 2024
+name = "김지성"
+print(f"년도 : {year}\n이름 : {name}")
+`;
+
+<PythonPlayground code={code} />
+```
+
+브라우저 편집창에는 Python 코드만 들어갑니다. 그곳에서는 `String.raw` 없이 `print(f"년도 : 2024\n이름 : 김지성")`처럼 입력하세요.
+따옴표 안에서 Enter를 눌러 코드 자체를 여러 줄로 작성하려면 Python의 삼중 따옴표를 사용합니다.
+
+```python
+print(f"""년도 : 2024
+이름 : 김지성""")
+```
+
+화면 폭 때문에 자동으로 접혀 보이는 줄은 실제 코드의 줄바꿈이 아니므로 실행에 영향을 주지 않습니다.
+
+`String.raw`에서도 백틱과 `${...}`는 JavaScript 문법으로 처리됩니다. 이런 내용이 포함된 코드는 별도 `.py` 파일을 사용하는 편이 간단합니다.
 긴 코드는 별도 `.py` 파일로 두고 `import code from './example.py?raw';`로 불러온 뒤 `code={code}`로 전달해도 됩니다.
 
 ## 2. CSV 파일 넣기

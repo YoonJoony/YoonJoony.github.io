@@ -30,9 +30,12 @@ test.describe('Python in blog posts', () => {
     await page.goto(url);
     const box = widget(page);
     await expect(box.locator('.cm-content')).toContainText('pd.read_csv');
+    // MDX가 Python 문자열의 \\n을 실제 개행으로 먼저 바꾸면 실행 단계에서 SyntaxError가 납니다.
+    await expect(box.locator('textarea')).toHaveValue(/print\("학습 기록:", len\(df\), "일\\n"\)/);
     expect(downloads).toHaveLength(0);
     await run(box);
     await expect(results(box)).toContainText('학습 기록: 5 일');
+    expect(await results(box).locator('[data-kind="stdout"]').first().textContent()).toBe('학습 기록: 5 일\n\n');
     await expect(results(box).locator('table')).toHaveCount(1);
     await expect(results(box).locator('tbody tr')).toHaveCount(5);
     await expect(results(box).locator('tbody tr').first()).toContainText('월');

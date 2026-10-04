@@ -29,7 +29,7 @@ async function loadFile(path: string, base: string) {
       const { done, value } = await reader.read();
       if (done) break;
       size += value.length;
-      if (size > 5 * 1024 * 1024) throw new Error(`${path} 파일이 5MB를 넘습니다. 작은 예제 파일을 사용해 주세요.`);
+      if (size > 10 * 1024 * 1024) throw new Error(`${path} 파일이 5MB를 넘습니다. 작은 예제 파일을 사용해 주세요.`);
       chunks.push(value);
     }
   } finally { await reader.cancel(); }

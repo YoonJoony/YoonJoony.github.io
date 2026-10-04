@@ -1,0 +1,217 @@
+---
+title: "Pandas 예제 : 병원 예약환자 별 노쇼율 분석"
+description: "SAM AXI 파이썬 Pandas 과제"
+pubDate: 2026-10-04
+slug: python-study04
+tags: [Python, pandas, Study]
+draft: false
+heroImage: ../../../../../assets/python-study-cover.png
+---
+
+## 병원 예약환자 별 노쇼율 분석
+환자ID, 예약ID, 예약등록날짜, 방문날짜, 노쇼여부 관련 csv 데이터를 활용하여
+1. **하위 목표 생성** : 내 생각으로 어떤 분석 목표가 있을 수 있을지 작성한다
+2. **하위 목표에 대한 코드 작성**
+3. **하위 목표에 대한 결론내기** : 목표만 잡지말고 목표에서 어떤 결과를 얻어낼 수 있는지 생각한다
+
+### CSV 데이터 미리보기
+| 환자ID | 예약ID | 성별 | 예약등록일시 | 방문예정일 | 나이 | 거주지역 | 문자수신여부 | **노쇼여부** |
+|---|---|---|---|---|---|---|---|---|
+| 2.99E+13 | 5642903 | F | 2016-04-29T18:38:08Z | 2016-04-29T00:00:00Z | 62 | JARDIM DA PENHA | 0 | **No** |
+| 5.59E+14 | 5642503 | M | 2016-04-29T16:08:27Z | 2016-04-29T00:00:00Z | 56 | JARDIM DA PENHA | 0 | **No** |
+| 4.26E+12 | 5642549 | F | 2016-04-29T16:19:04Z | 2016-04-29T00:00:00Z | 62 | MATA DA PRAIA | 0 | **No** |
+
+import PythonPlayground from "../../../../../components/PythonPlayground.astro"
+
+export const code = String.raw`
+import pandas as pd
+
+# csv 파일 읽어 DataFrame 타입 반환
+medical = pd.read_csv("/data/python-study/pandas/noshow-data.csv", encoding="utf-8")
+medical.rename(columns={medical.columns[0]: '환자ID',
+                        medical.columns[1]: '예약ID',
+                        medical.columns[2]: '성별',
+                        medical.columns[3]: '예약등록일자',
+                        medical.columns[4]: '방문예정일자',
+                        medical.columns[5]: '나이',
+                        medical.columns[6]: '거주지역',
+                        medical.columns[7]: '문자수신여부',
+                        medical.columns[8]: '노쇼여부'}, inplace=True)
+# 날짜 타입 데이터 핸들링을 위한 dateTime 타입 변환 
+medical["예약등록일자"] = pd.to_datetime(medical["예약등록일자"])
+medical["방문예정일자"] = pd.to_datetime(medical["방문예정일자"])
+
+# 노쇼 특징 파악 정리
+# 예약한 날과 실제 병원 방문하는 날의 차이(기다리는 기간)가 많이 날수록 노쇼가 발생한다. 
+
+# 1. 대기시간 계산 후 정수 형태로 변환
+medical["대기시간"] = (medical["방문예정일자"].dt.normalize() - medical["예약등록일자"].dt.normalize()).dt.days
+# 계산 후 음수 값 제외
+medical = medical.query('대기시간 >= 0')
+medical.sort_values(by="대기시간", ascending=False, inplace=True)
+
+# 2. 대기시간과 노쇼 관계
+# 병원 방문환자 평균 대기일수
+visit_mean = round(medical.query('노쇼여부 == "No"')["대기시간"].mean(), 2)
+# 노쇼환자 평균 대기일수
+noshow_mean = round(medical.query('노쇼여부 == "Yes"')["대기시간"].mean(), 2)
+
+print("\n============= 1. 예약환자의. 병원 방문 여부 별 평균 대기일수 ==================\n")
+# 1번 결과 판정
+print(f"방문환자 평균 대기일수 : {visit_mean}일\n노쇼환자 평균 대기일수 : {noshow_mean}일")
+print(">> 1번 판정 결과 : 노쇼환자의 평균 대기일수가 방문환자보다 길다.")
+
+print("\n===============================================================================\n")
+
+# 2. 1월과 5월 예약 환자의 경우 집단 별 특성 검증
+print("============= 2. 1월부터 5월에 예약한경우 대기시간이 길면 노쇼가 발생한다 =========")
+
+month1_arr = []
+
+for i in range(1, 7):
+    status = "증가"
+    medical_month_visit_mean = round(medical.query('예약등록일자.dt.month == @i and 노쇼여부 == "No"')["대기시간"].mean(), 2)
+    medical_month_noshow_mean = round(medical.query('예약등록일자.dt.month == @i and 노쇼여부 == "Yes"')["대기시간"].mean(), 2)
+    print(f"\n{i}월 방문환자들의 평균 대기시간 : {medical_month_visit_mean}")
+    print(f"{i}월 노쇼환자들의 평균 대기시간 : {medical_month_noshow_mean}")
+
+    percent = round((medical_month_noshow_mean / medical_month_visit_mean), 2) * 100
+
+    if percent < 100:
+        percent = 100 - percent
+        status = "감소"
+    elif percent == 100:
+        continue
+
+    if i < 6:
+        month1_arr.append(int(percent))
+
+    print(f"{i}월 방문환자 대비 노쇼환자의 평균 대기시간 비율 : {percent:,.0f}% {status}\n")
+
+print("""
+>> 2번 판정 결과 :
+1. 가장 대기시간이 긴 1월의 경우 방문환자보다 노쇼환자의 대기시간이 더 길다.
+2. 그러나 2월달, 3월달의 경우 노쇼환자의 대기시간이 더 짧으며,
+4월부터 6월까진 노쇼환자의 대기시간이 더 길어 전체적으로 U자형 곡선을 이룸.
+따라서 해당 결과로는 대기시간이 길다고 노쇼가 많이 발생한다고 판별하기 어렵다.""")
+
+print("\n================================================================================\n")
+
+print("============= 3. 대기일수 기준 전체예약 건수 대비 노쇼율 =====================\n")
+
+# 대기시간 마다 특정 대기시간 구간을 정한 후 새 컬럼으로 생설 
+medical["대기시간그룹"] = pd.cut(medical["대기시간"], bins=[0, 20, 40, 80, 180], labels=["0~20일", "21~40일", "41~80일", "81~145일"], include_lowest=True)
+# 대기시간 그룹 별 전체건수, 노쇼건수 계산
+medical_noshow_percent = medical.groupby("대기시간그룹", observed=False).agg(전체건수=('노쇼여부', 'count'), 노쇼건수=('노쇼여부', lambda x: (x == 'Yes').sum()))
+medical_noshow_percent['노쇼율'] = round((medical_noshow_percent["노쇼건수"] / medical_noshow_percent["전체건수"]) * 100, 1)
+display(medical_noshow_percent)
+print("\n>> 3번 판정 결과 :\n대기시간이 0~20일인 경우 노쇼율이 낮지만 21~80일인 경우 노쇼율이 크게 올라감.")
+print("그러나 예외적으로 병원 상태, 환자 재진 여부 등을 고려해야하므로 비율이 더욱 달라질 수 있다.")
+
+print("\n============================================================================\n")
+
+print("============= 4. 방문빈도 상위 500명은 3개월 내 50회 이상 방문한다 ==================\n")
+# 가장 최신에 예약한 고객의 예약등록일자를 추출
+max_date = medical["예약등록일자"].max()
+# 위에서 구한 최신 일자에서 3개월 전 날짜를 계산
+three_month_ago = max_date - pd.DateOffset(months=3)
+# 테이블에서 3개월 전 이후인 건만 조회 후 환자ID로 GROUP BY한다. 이후 예약ID 건수를 통해 환자 별 예약건수 Series 객체로 만듬 (상위 500개 데이터만)
+medical_visit_many = medical.query("예약등록일자 >= @three_month_ago").groupby('환자ID')['예약ID'].count().nlargest(500).reset_index(name="예약건수")
+print("방문빈도 상위 500명 리스트")
+display(pd.concat([medical_visit_many.head(5), medical_visit_many.tail(5)]))
+print(">> 4번 판정 결과:\n500번째 환자의 예약건수는 50회 이상이다")
+
+print("\n===================================================================================\n")
+
+print("============= 5. 방문 횟수가 가장 많은 환자 10명도 노쇼가 발생하나? =================\n")
+# 유저 별. 방문건수 상위 1100 집계 (1100건 집계한 이유는 방문건수 최상위 환자와 방문건수 중간이하인 환자의 노쇼율 비교를 위해)
+medical_visit_many = medical.groupby("환자ID", observed=False).agg(예약건수=('예약ID', 'count'), 노쇼건수=('노쇼여부', lambda x:(x == "Yes").sum()))
+medical_visit_many["방문건수"] = medical_visit_many["예약건수"] - medical_visit_many["노쇼건수"]
+medical_visit_many_1100 = medical_visit_many.nlargest(1100, "방문건수")
+# 방문건수 대비 노쇼율 계산
+medical_visit_many_1100["노쇼율"] = round((medical_visit_many_1100["노쇼건수"] / medical_visit_many_1100["예약건수"]) * 100, 2)
+# 방문건수 GROUP BY 후 각 동일한 방문건수들의 평균 노쇼율 계산
+medical_visit_cnt_by_noshow_1100 = round(medical_visit_many_1100.groupby("방문건수").agg(평균노쇼율=('노쇼율', lambda x:x.mean())), 2).sort_values(by="방문건수", ascending=False)
+# 방문건수 상위 10건과 하위 10건 비교
+print("[방문건수 대비 상위 10명 / 하위 10명 노쇼율]")
+display(pd.concat([medical_visit_many_1100.head(10), medical_visit_many_1100.tail(10)]))
+# 방문건수 별 노쇼율 상위 10건과 하위 10건 비교
+print("[동일한 방문건수 별 상위 10명 / 하위 10명 노쇼율]")
+display(pd.concat([medical_visit_cnt_by_noshow_1100.head(10), medical_visit_cnt_by_noshow_1100.tail(10)]))
+print("""
+>> 5번 판정 결과:
+1. 방문건수 90~130회인 환자 10명 중 발생하는 노쇼건수는 6회~21회 가량 이루어짐. 따라서 최상위 건수라도 노쇼율 발생
+2. 추가적으로, 각 동일한 방문건수 별로 노쇼율을 보았을때 오히려 방문건수가 보다 낮은 환자에게 더 높은 노쇼율을 보임
+그러나 환자의 재진 상황, 병원 상태 등 영향을 미칠 요소가 아직 많다.
+""")
+print("===================================================================================\n")
+
+# 알림 메시지를 허용하지 않은 경우 대기일수가 5일 이상이면 노쇼 발생
+print("============= 6. 알림 메시지를 허용하지 않은 경우 대기시간 5일 이상이면 노쇼 발생 =================\n")
+# 7번도 써서 함수로 구현
+def no_alarm_medical_list(delay):
+    # 알림 허용안한 환자
+    medical_no_alarm = medical.query('문자수신여부 == 0').copy()
+    # 정해진 대기시간 미만/이상 그룹 구함
+    medical_no_alarm["대기시간구분"] = (
+        medical_no_alarm["대기시간"] >= delay
+    ).map({False: f"{delay}일 미만", True: f"{delay}일 이상"})
+    # 대기시간 미만/이상 별 노쇼건수를 구함
+    result = medical_no_alarm.groupby("대기시간구분").agg(
+        전체예약건수=("예약ID", "count"),
+        노쇼건수=("노쇼여부", lambda x: (x == "Yes").sum())
+    )
+    
+    result["방문건수"] = result["전체예약건수"] - result["노쇼건수"]
+    result["노쇼율"] = (
+        result["노쇼건수"] / result["전체예약건수"] * 100
+    ).round(2)
+    return result
+
+result = no_alarm_medical_list(5)
+
+print("[대기시간이 5일이상인 그룹과 5일미만인 그룹의 노쇼율]")
+display(result)
+
+print("""
+>> 6번 판정 결과:
+5일 미만인 경우보다 5일 이상인 경우가 노쇼율이 높은 경우로 확인됨
+""")
+
+print("===================================================================================\n")
+
+# 알림 메시지를 허용하지 않은 경우 대기일수가 18일 이상되면 노쇼 발생
+print("============= 7. 알림 메시지를 허용하지 않은 경우 대기시간 18일 이상이면 노쇼 발생 =================\n")
+
+result = no_alarm_medical_list(18)
+print("[대기시간이 18일이상인 그룹과 18일미만인 그룹의 노쇼율]")
+display(result)
+print("""
+>> 7번 판정 결과:
+18일 미만인 경우보다 18일 이상인 경우가 노쇼율이 높은 경우로 확인됨
+""")
+
+print("\n===================================================================================\n")
+
+# 알림 메시지를 허용하지 않으면 노쇼가 발생할 확률이 노쇼가 발생하지 않을 확률보다 5배 정도 높다
+
+print("============= 8. 알림 메시지를 허용하지 않으면 노쇼가 발생할 확률이 노쇼가 발생하지 않을 확률보다 5배 정도 높다 =================\n")
+
+medical_no_alarm = medical.query('문자수신여부 == 0').copy()
+medical_no_alarm_result = medical_no_alarm.agg(방문건수 = ('노쇼여부', lambda x:(x == "No").sum()), 노쇼건수 = ('노쇼여부', lambda x:(x == "Yes").sum()))
+visit_cnt = medical_no_alarm_result.iat[0, 0]
+noshow_cnt = medical_no_alarm_result.iat[1, 0]
+
+result = round(visit_cnt / noshow_cnt, 0)
+display(medical_no_alarm_result)
+print(f"\n>> 8번 판정 결과 : 방문건수는 노쇼건수보다 {result:,.0f}배 정도 높다")
+print("\n=============================================================================================================================\n")
+
+`
+
+<PythonPlayground
+    title="병원 예약환자 별 노쇼율 분석"
+    code={code}
+    datasets={[{ path : '/data/python-study/pandas/noshow-data.csv', label : 'noshow-data.csv'}]}
+/>
+
