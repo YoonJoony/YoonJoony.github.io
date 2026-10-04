@@ -1,0 +1,48 @@
+---
+import { validatePythonConfig, type PythonDataset } from '../lib/python-config';
+import '../styles/python-playground.css';
+
+interface Props {
+  code: string;
+  title?: string;
+  datasets?: PythonDataset[];
+  timeoutMs?: number;
+}
+
+// 글 작성자는 code와 datasets만 바꾸면 됩니다. 실제 실행은 독자의 브라우저에서 합니다.
+const { code, title = 'Python 실습', datasets = [], timeoutMs = 30_000 } = Astro.props;
+validatePythonConfig(datasets, timeoutMs);
+const id = `python-${crypto.randomUUID()}`;
+const config = { datasets, timeoutMs, base: import.meta.env.BASE_URL };
+const publicUrl = (path: string) => `${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}`;
+---
+
+<python-playground class="python-playground" data-config={JSON.stringify(config)} aria-labelledby={`${id}-title`}>
+  <div class="python-heading">
+    <div><span class="python-kicker">INTERACTIVE PYTHON</span><h3 id={`${id}-title`}>{title}</h3></div>
+    <span class="python-libraries">pandas · NumPy · Matplotlib</span>
+  </div>
+  <div class="python-editor" data-editor>
+    {/* JavaScript가 꺼져도 예제 코드는 읽고 복사할 수 있습니다. */}
+    <label class="sr-only" for={`${id}-code`}>Python 코드</label>
+    <textarea id={`${id}-code`} data-code spellcheck="false" rows="14" aria-describedby={`${id}-help`}>{code.trim()}</textarea>
+  </div>
+  <div class="python-toolbar">
+    <div class="python-actions">
+      <button type="button" data-run disabled>실행</button>
+      <button type="button" data-stop disabled>중지</button>
+      <button type="button" data-reset disabled>예제 초기화</button>
+    </div>
+    <span class="python-shortcut">Ctrl / ⌘ + Enter</span>
+  </div>
+  <p class="python-help" id={`${id}-help`}>코드를 바꾸고 실행해 보세요. 첫 실행에는 Python 환경을 불러옵니다. 실행할 때마다 변수는 새로 시작합니다.</p>
+  {datasets.length > 0 && <div class="python-datasets"><span>예제 CSV</span>{datasets.map((dataset) => <a href={publicUrl(dataset.path)} download>{dataset.label ?? dataset.path.split('/').pop()}</a>)}</div>}
+  <div class="python-result-header"><strong>실행 결과</strong><span data-status role="status" aria-live="polite">실행 준비 중</span></div>
+  {/* 출력 전체를 live 영역으로 만들면 긴 표를 계속 읽으므로 상태만 알립니다. */}
+  <div class="python-output" data-output role="region" aria-label="Python 실행 결과" aria-busy="false" tabindex="0"><p class="python-placeholder">실행하면 텍스트, 표, 그래프가 이곳에 순서대로 표시됩니다.</p></div>
+  <p class="python-help" data-js-fallback>코드를 실행하려면 브라우저의 JavaScript를 켜 주세요.</p>
+</python-playground>
+
+<script>
+  import '../scripts/python-playground';
+</script>

@@ -1,0 +1,52 @@
+/* 실습 박스 전용 스타일입니다. 일반 Markdown 코드 블록에는 영향을 주지 않습니다. */
+.python-playground {
+  --python-selection: #404e58; --python-keyword: #99c6f5; --python-string: #b5d5a0;
+  --python-number: #eec78e; --python-function: #d0b4e8;
+  display: block; margin: 30px 0; min-width: 0; max-width: 100%;
+  border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+  background: var(--bg); font-size: 14px; line-height: 1.6; letter-spacing: normal;
+}
+[data-theme="light"] .python-playground {
+  --python-selection: #d6e5f0; --python-keyword: #245b94; --python-string: #3b6530;
+  --python-number: #885018; --python-function: #755194;
+}
+.python-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 18px 20px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.python-kicker { font-size: 10px; color: var(--muted); letter-spacing: .12em; font-weight: 600; }
+.python-playground .python-heading h3 { font-size: 17px; margin: 4px 0 0; letter-spacing: -.02em; }
+.python-libraries { font-size: 11px; color: var(--muted); }
+.python-editor { max-width: 100%; min-width: 0; }
+.python-editor textarea { display: block; width: 100%; min-height: 280px; resize: vertical; padding: 16px; border: 0; background: var(--bg); color: var(--text); font: 13px/1.8 monospace; tab-size: 4; }
+.python-editor .cm-editor { outline-offset: -2px; }
+.python-editor .cm-editor.cm-focused { outline: 2px solid var(--muted); }
+.python-toolbar { padding: 12px 16px; border-block: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.python-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.python-actions button { min-height: 38px; border: 1px solid var(--line); border-radius: 5px; padding: 6px 13px; background: var(--surface); color: var(--text); font-size: 12px; font-weight: 600; }
+.python-actions [data-run] { background: var(--active-bg); color: var(--active-text); border-color: var(--active-bg); }
+.python-actions button:disabled { opacity: .45; cursor: default; }
+.python-actions button:hover:not(:disabled) { filter: brightness(1.15); }
+.python-shortcut { font-size: 11px; color: var(--muted); }
+.python-playground .python-help { margin: 12px 16px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.python-datasets { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 12px 16px 18px; font-size: 12px; }
+.python-datasets > span { color: var(--muted); }
+.python-result-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 12px 16px; border-block: 1px solid var(--line); background: var(--surface); font-size: 12px; }
+.python-result-header [data-status] { color: var(--muted); font-weight: 400; }
+.python-output { min-height: 100px; max-height: 720px; overflow: auto; padding: 18px 16px; }
+.python-playground .python-output > p { margin: 0; color: var(--muted); font-size: 12px; }
+.python-playground .python-output pre { margin: 0 0 16px; padding: 10px 12px; font: 12px/1.7 "SFMono-Regular", Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--line); border-radius: 4px; }
+.python-playground pre[data-kind="error"], .python-playground pre[data-kind="stderr"] { border-left: 3px solid #c46c66; }
+.python-playground pre[data-kind="notice"] { color: var(--muted); }
+.python-playground .python-output figure { margin: 0 0 20px; }
+.python-playground .python-output img { display: block; width: 100%; height: auto; margin: 0; background: white; }
+.python-table { max-width: 100%; overflow: auto; margin-bottom: 20px; }
+.python-playground .python-table table { display: table; width: max-content; min-width: 100%; margin: 0; font-size: 12px; border-collapse: collapse; }
+.python-table caption { text-align: left; padding-bottom: 8px; font-size: 12px; font-weight: 600; }
+.python-playground .python-table th, .python-playground .python-table td { min-width: 58px; max-width: 260px; padding: 7px 10px; border: 1px solid var(--line); text-align: left; overflow-wrap: anywhere; }
+.python-playground .python-table p { margin: 6px 0 0; font-size: 11px; color: var(--muted); }
+@media (max-width: 600px) {
+  .python-heading { padding: 14px; }
+  .python-toolbar, .python-result-header { padding: 10px; }
+  .python-output { padding: 14px 10px; max-height: 560px; }
+  .python-shortcut { display: none; }
+  .python-actions { gap: 5px; }
+  .python-actions button { padding-inline: 10px; min-height: 44px; }
+}

@@ -158,17 +158,27 @@ test('without JavaScript, static article and expandable folder links remain usab
 
 test('drafts and archived templates are absent from public discovery and feeds', async ({ request }) => {
   const rss = await (await request.get('/rss.xml')).text();
-  expect((rss.match(/<item>/g) ?? []).length).toBe(11);
+  // 새 글을 쓸 때마다 수치를 바꾸지 않고 실제 공개 글과 RSS를 대조합니다.
+  const entries = readdirSync('src/content/blog', { recursive: true, encoding: 'utf8' })
+    .filter((path) => path.includes('/') && /\.mdx?$/.test(path))
+    .map((path) => readFileSync(join('src/content/blog', path), 'utf8'));
+  const publicSlugs = entries.filter((source) => !/^draft:\s*true\s*$/m.test(source))
+    .map((source) => source.match(/^slug:\s*(\S+)\s*$/m)![1]);
+  expect((rss.match(/<item>/g) ?? []).length).toBe(publicSlugs.length);
+  for (const slug of publicSlugs) expect(rss).toContain(`/posts/${slug}/`);
   expect(rss).not.toContain('axi-0922');
+  expect(rss).not.toContain('axi-1002');
   expect(rss).toContain('dlnpl-book');
   expect(rss).toContain('blog-memo');
   expect(rss).not.toContain('archive-');
   for (const name of readdirSync('dist').filter((name) => /^sitemap.*\.xml$/.test(name))) {
     const sitemap = readFileSync(join('dist', name), 'utf8');
     expect(sitemap).not.toContain('/posts/axi-0922/');
+    expect(sitemap).not.toContain('/posts/axi-1002/');
     expect(sitemap).not.toContain('/posts/archive-');
     expect(sitemap).not.toContain('/blog/');
   }
   expect((await request.get('/posts/axi-0922/')).status()).toBe(404);
+  expect((await request.get('/posts/axi-1002/')).status()).toBe(404);
   expect((await request.get('/posts/dlnpl-book/')).status()).toBe(200);
 });
