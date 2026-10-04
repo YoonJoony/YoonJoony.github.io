@@ -152,7 +152,7 @@ print("<script>alert(1)</script>")`);
   test('keeps readable code without JavaScript and loads no Python for normal articles', async ({ browser, page }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const staticPage = await context.newPage();
-    await staticPage.goto(`http://127.0.0.1:4321${url}`);
+    await staticPage.goto(`http://127.0.0.1:4322${url}`);
     await expect(widget(staticPage).locator('textarea')).toHaveValue(/pd.read_csv/);
     await expect(widget(staticPage).getByRole('button', { name: '실행', exact: true })).toBeDisabled();
     await expect(staticPage.getByText('코드를 실행하려면 브라우저의 JavaScript를 켜 주세요.').first()).toBeVisible();

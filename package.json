@@ -12,7 +12,7 @@
     "astro": "astro",
     "check": "astro check",
     "test": "node --test tests/unit/*.test.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "astro build --config tests/fixtures/astro.config.mjs && playwright test"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.0.2",

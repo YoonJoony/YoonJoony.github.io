@@ -143,10 +143,10 @@ test('mobile has a readable article and a working return to its folder', async (
 test('without JavaScript, static article and expandable folder links remain usable', async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
-  await page.goto('http://127.0.0.1:4321/posts/python-study01/');
+  await page.goto('http://127.0.0.1:4322/posts/python-study01/');
   await expect(page.locator('.post-reader h1')).toBeVisible();
   await expect(page.locator('.prose')).toContainText('venv');
-  await page.goto('http://127.0.0.1:4321/posts/');
+  await page.goto('http://127.0.0.1:4322/posts/');
   await expect(page.locator('.root-folder').first()).toHaveAttribute('open', '');
   await expect(page.locator('details[open]')).toHaveCount(1);
   await summary(page, 'DE Map/Python').click();
@@ -171,8 +171,8 @@ test('drafts and archived templates are absent from public discovery and feeds',
   expect(rss).toContain('dlnpl-book');
   expect(rss).toContain('blog-memo');
   expect(rss).not.toContain('archive-');
-  for (const name of readdirSync('dist').filter((name) => /^sitemap.*\.xml$/.test(name))) {
-    const sitemap = readFileSync(join('dist', name), 'utf8');
+  for (const name of readdirSync('dist-e2e').filter((name) => /^sitemap.*\.xml$/.test(name))) {
+    const sitemap = readFileSync(join('dist-e2e', name), 'utf8');
     expect(sitemap).not.toContain('/posts/axi-0922/');
     expect(sitemap).not.toContain('/posts/axi-1002/');
     expect(sitemap).not.toContain('/posts/archive-');

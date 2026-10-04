@@ -1,0 +1,40 @@
+---
+import SiteLayout from '../../src/layouts/SiteLayout.astro';
+import ProfileHero from '../../src/components/ProfileHero.astro';
+import NoticeBar from '../../src/components/NoticeBar.astro';
+import PostCard from '../../src/components/PostCard.astro';
+import { getPosts } from '../../src/lib/posts';
+import type { Notice } from '../../src/lib/notices';
+import { Image } from 'astro:assets';
+import potatoIcon from '../../src/assets/potato.png';
+
+export function getStaticPaths() {
+  const short: Notice[] = [
+    { title: '블로그 이용 안내', slug: 'blog-memo' },
+    { title: 'Python 실습 안내', slug: 'python-visualization-01' },
+    { title: '학습 기록 업데이트', slug: 'python-study01' },
+  ];
+  const long = short.map((notice) => ({ ...notice, title: notice.title + ' — ' + '긴 공지 제목도 잘리지 않고 끝까지 읽을 수 있습니다. '.repeat(6) }));
+  return Object.entries({ empty: [], short, long, single: [long[0]] })
+    .map(([scenario, notices]) => ({ params: { scenario }, props: { notices } }));
+}
+interface Props { notices: Notice[]; }
+const { notices } = Astro.props;
+const posts = (await getPosts()).slice(0, 3);
+---
+<SiteLayout noindex>
+  <main id="main" class:list={['container home-main', { 'has-notices': notices.length > 0 }]}>
+    <ProfileHero />
+    <NoticeBar notices={notices} />
+    <section class="recent-section" aria-labelledby="recent-title">
+      <h2 class="section-title recent-title" id="recent-title">
+        <Image src={potatoIcon} alt="" class="recent-title-icon" width={36} height={36} format="webp" />
+        <span>땃땃한 최신글</span>
+      </h2>
+      <div class="recent-grid">
+        <PostCard post={posts[0]} variant="featured" />
+        <div class="recent-side">{posts.slice(1).map((post) => <PostCard post={post} variant="compact" />)}</div>
+      </div>
+    </section>
+  </main>
+</SiteLayout>

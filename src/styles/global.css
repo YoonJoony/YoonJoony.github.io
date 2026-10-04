@@ -70,6 +70,8 @@ a,button,summary { -webkit-tap-highlight-color: transparent; }
 /* [메인 1: 소개] 두 열을 약 39:61로 나눕니다. gap은 사진과 설명 사이 거리입니다.
    margin의 40px은 위, 0은 좌우, 52px은 아래 여백입니다. */
 .profile-hero { margin: 40px 0 52px; display: grid; grid-template-columns: minmax(0, .39fr) minmax(0, .61fr); gap: 34px; align-items: center; }
+/* 공지가 있는 경우만 간격을 나눕니다. 공지가 없으면 기존 화면의 여백을 유지합니다. */
+.home-main.has-notices .profile-hero { margin-bottom: 24px; }
 /* 소개 사진의 세로 길이는 height. object-fit: cover는 칸을 채우도록 일부를 잘라 보여줍니다. */
 .profile-photo { width: 100%; height: 278px; object-fit: cover; }
 .eyebrow { font-size: 12px; font-weight: 500; letter-spacing: .02em; color: var(--muted); margin-bottom: 10px; }

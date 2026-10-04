@@ -1,0 +1,72 @@
+/* 공지는 작은 제목 박스만 채웁니다. 영역 전체 배경과 위아래 구분선은 없습니다. */
+.notice-bar {
+  --notice-fill: #2b2b2b;
+  --notice-hover: #353535;
+  --notice-text: #dedede;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  margin-bottom: 24px;
+}
+[data-theme="light"] .notice-bar {
+  --notice-fill: #e9e9e5;
+  --notice-hover: #ddddd7;
+  --notice-text: #303030;
+}
+.notice-label {
+  flex: none;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--muted);
+  white-space: nowrap;
+}
+/* min-width: 0은 긴 제목이 페이지 전체 너비를 밀어내지 않게 합니다. */
+.notice-viewport {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  scroll-behavior: auto;
+}
+.notice-viewport::-webkit-scrollbar { display: none; }
+.notice-track { display: flex; width: max-content; gap: 8px; }
+.notice-group { display: flex; flex: none; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.notice-group > li { flex: none; }
+/* 보이는 박스는 28px, 투명한 여백을 포함한 클릭 영역은 44px입니다. */
+.notice-link { display: flex; align-items: center; min-height: 44px; position: relative; }
+.notice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 9px;
+  border-radius: 4px;
+  background: var(--notice-fill);
+  color: var(--notice-text);
+  font-size: 13px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.notice-link:hover .notice-chip { background: var(--notice-hover); }
+.notice-link:focus-visible { outline: none; }
+.notice-link:focus-visible .notice-chip { outline: 2px solid var(--text); outline-offset: -2px; }
+.notice-dot { flex: none; width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .7; }
+.notice-toggle {
+  flex: none;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+}
+.notice-toggle:hover { color: var(--text); }
+.notice-bar[data-mode="auto"] .notice-viewport { overflow-x: hidden; touch-action: pan-y; }
+.notice-bar[data-mode="auto"] .notice-track { will-change: transform; }
+@media (max-width: 700px) {
+  .notice-bar { gap: 10px; }
+}

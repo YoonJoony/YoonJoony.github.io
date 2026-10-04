@@ -1,0 +1,36 @@
+---
+// 공지의 화면 구조입니다. 색·간격은 notice-bar.css, 움직임은 notice-bar.ts에서 바꿉니다.
+import type { Notice } from '../lib/notices';
+import { postsUrl } from '../lib/post-urls';
+import '../styles/notice-bar.css';
+
+interface Props { notices: Notice[]; }
+const { notices } = Astro.props;
+---
+{notices.length > 0 && (
+  <notice-bar class="notice-bar" role="region" aria-labelledby="notice-label">
+    <h2 id="notice-label" class="notice-label">공지</h2>
+    {/* JavaScript가 없어도 원본 링크를 읽고 가로로 스크롤할 수 있습니다. */}
+    <div class="notice-viewport" data-notice-viewport>
+      <div class="notice-track" data-notice-track>
+        <ul class="notice-group" data-notice-original role="list">
+          {notices.map((notice, index) => (
+            <li>
+              <a class="notice-link" href={postsUrl('', '', notice.slug)}>
+                <span class="notice-chip">
+                  {index === 0 && <><span class="notice-dot" aria-hidden="true"></span><span class="sr-only">가장 최근 공지: </span></>}
+                  <span>{notice.title}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    {/* 제목이 넘쳐 자동 이동할 때만 스크립트가 이 버튼을 표시합니다. */}
+    <button class="notice-toggle" type="button" data-notice-toggle hidden aria-label="공지 자동 이동 멈춤">멈춤</button>
+  </notice-bar>
+)}
+<script>
+  import '../scripts/notice-bar';
+</script>
