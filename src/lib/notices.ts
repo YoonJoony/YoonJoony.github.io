@@ -16,6 +16,6 @@ export function getNotices(posts: readonly NoticePost[]): Notice[] {
   return posts
     .filter((post) => !post.draft && matchesTag(post.tags, '공지사항'))
     .sort(newestFirst)
-    .slice(0, 3)
+    .slice(0, 5)
     .map(({ title, slug }) => ({ title, slug }));
 }

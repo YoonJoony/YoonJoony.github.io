@@ -44,7 +44,7 @@ const news = await getNews();
     {/* 3. 뉴스: 실제 뉴스가 있으면 NewsCard를 반복하고, 없으면 준비 중 화면을 보여줍니다.
         최신 3개를 고르는 기준은 lib/posts.ts의 getNews()에 있습니다. */}
     <section class="news-section" aria-labelledby="news-title">
-      <h2 id="news-title" class="section-title">News Research</h2>
+      <h2 id="news-title" class="section-title">뉴스 리서치</h2>
       {news.length ? <div class="news-list">{news.map((item) => <NewsCard item={item} />)}</div>
         : <div class="news-card news-empty">
             <Image src={site.cover} alt="" widths={[480, 800]} sizes="(max-width: 700px) 100vw, 50vw" format="webp" />
