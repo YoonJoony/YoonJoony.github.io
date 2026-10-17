@@ -1,11 +1,12 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { categories } from './data/categories';
 
 const blog = defineCollection({
   loader: glob({
     base: './src/content/blog',
-    pattern: ['DE Map/**/*.{md,mdx}', 'BE Map/**/*.{md,mdx}', 'Project Map/**/*.{md,mdx}', 'Blog/**/*.{md,mdx}'],
+    pattern: categories.map(({ id }) => `${id}/**/*.{md,mdx}`),
     // Separate file identity from the public URL so duplicate slugs can be detected.
     generateId: ({ entry }) => entry.normalize('NFC').replace(/\.(md|mdx)$/, ''),
   }),

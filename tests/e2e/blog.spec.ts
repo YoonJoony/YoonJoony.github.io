@@ -30,11 +30,11 @@ test('the first category opens on entry while manual collapse, history and folde
   await page.goto('/posts/');
   await expect(page.locator('.root-folder').first()).toHaveAttribute('open', '');
   await expect(page.locator('details[open]')).toHaveCount(1);
-  await expect(summary(page, 'DE Map/Python')).toBeVisible();
+  await expect(summary(page, 'AI Map/Python')).toBeVisible();
   await expect(page.locator('[data-reader-selection]')).toBeHidden();
   await page.reload();
   await expect(page.locator('details[open]')).toHaveCount(1);
-  await summary(page, 'DE Map').click();
+  await summary(page, 'AI Map').click();
   await expect(page.locator('details[open]')).toHaveCount(0);
   await summary(page, 'BE Map').click();
   await expect(page.locator('details[data-folder="BE Map"]')).toHaveAttribute('open', '');
@@ -56,10 +56,10 @@ test('the first category opens on entry while manual collapse, history and folde
 test('folders open one branch; articles retain folder depth, refresh and history', async ({ page }) => {
   await page.goto('/posts/');
   await expect(page.locator('details[open]')).toHaveCount(1);
-  await expect(page.locator('.root-folder')).toHaveCount(4);
-  await summary(page, 'DE Map/Python').click();
-  await summary(page, 'DE Map/Python/파이썬 기본기').click();
-  const lessons = page.locator('details[data-folder="DE Map/Python/파이썬 기본기"] .post-card');
+  await expect(page.locator('.root-folder')).toHaveCount(5);
+  await summary(page, 'AI Map/Python').click();
+  await summary(page, 'AI Map/Python/파이썬 기본기').click();
+  const lessons = page.locator('details[data-folder="AI Map/Python/파이썬 기본기"] .post-card');
   await expect(lessons).toHaveCount(3);
   await lessons.first().getByRole('heading').getByRole('link').click();
   await expect(page).toHaveURL(/\/posts\/python-study01\//);
@@ -71,11 +71,11 @@ test('folders open one branch; articles retain folder depth, refresh and history
   await page.screenshot({ path: test.info().outputPath('posts-desktop.png'), fullPage: true });
   const desktopSize = await page.evaluate(() => ({ height: innerHeight, scroll: document.documentElement.scrollHeight, boxes: [...document.querySelectorAll('body,.posts-main,.posts-workspace,.site-header,.site-footer,.reader-pane')].map((item) => ({ class: item.className, top: item.getBoundingClientRect().top, height: item.getBoundingClientRect().height, overflow: getComputedStyle(item).overflow, minHeight: getComputedStyle(item).minHeight })) }));
   expect(desktopSize.scroll, JSON.stringify(desktopSize)).toBeLessThanOrEqual(desktopSize.height + 1);
-  const parent = await summary(page, 'DE Map/Python').boundingBox();
+  const parent = await summary(page, 'AI Map/Python').boundingBox();
   const nested = await lessons.first().boundingBox();
   expect(nested!.x).toBeGreaterThan(parent!.x);
   await summary(page, 'BE Map').click();
-  await expect(page.locator('details[data-folder="DE Map"]')).not.toHaveAttribute('open', '');
+  await expect(page.locator('details[data-folder="AI Map"]')).not.toHaveAttribute('open', '');
   await expect(page.getByText('아직 공개된 글이 없습니다.').filter({ visible: true })).toBeVisible();
   await expect(page.locator('[data-reader-selection]')).toBeHidden();
   await page.goBack();
@@ -105,11 +105,11 @@ test('tag filtering, incompatible deep links and browser history agree', async (
 
 test('keyboard navigation, theme persistence and legacy URLs work', async ({ page }) => {
   await page.goto('/posts/');
-  await summary(page, 'DE Map').focus();
+  await summary(page, 'AI Map').focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('details[data-folder="DE Map"]')).not.toHaveAttribute('open', '');
+  await expect(page.locator('details[data-folder="AI Map"]')).not.toHaveAttribute('open', '');
   await page.keyboard.press('Enter');
-  await expect(page.locator('details[data-folder="DE Map"]')).toHaveAttribute('open', '');
+  await expect(page.locator('details[data-folder="AI Map"]')).toHaveAttribute('open', '');
   await page.getByRole('button', { name: '밝은 테마로 변경' }).click();
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -149,8 +149,8 @@ test('without JavaScript, static article and expandable folder links remain usab
   await page.goto('http://127.0.0.1:4322/posts/');
   await expect(page.locator('.root-folder').first()).toHaveAttribute('open', '');
   await expect(page.locator('details[open]')).toHaveCount(1);
-  await summary(page, 'DE Map/Python').click();
-  await summary(page, 'DE Map/Python/파이썬 기본기').click();
+  await summary(page, 'AI Map/Python').click();
+  await summary(page, 'AI Map/Python/파이썬 기본기').click();
   await page.locator('[data-post-card="python-study01"] h3 a').click();
   await expect(page.locator('.post-reader h1')).toBeVisible();
   await context.close();

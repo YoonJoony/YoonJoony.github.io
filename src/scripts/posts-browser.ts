@@ -64,7 +64,7 @@ function setupBrowser(root: HTMLElement) {
     const clean = postsUrl(folder, tag, state.slug) + url.hash;
     if (url.pathname + url.search + url.hash !== clean) history.replaceState(null, '', clean);
 
-    // 선택 경로와 그 부모만 엽니다. BE MAP을 열면 이전 DE MAP 분기는 닫힙니다.
+    // 선택 경로와 그 부모만 엽니다. BE MAP을 열면 이전 AI MAP 분기는 닫힙니다.
     for (const node of folders) node.open = isAncestor(node.dataset.folder!, folder);
     // 태그가 맞지 않는 카드는 hidden으로 숨기고, 선택한 카드에는 강조 클래스를 붙입니다.
     for (const card of cards) {

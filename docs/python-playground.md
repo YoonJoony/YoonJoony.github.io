@@ -5,7 +5,7 @@
 일반 `.md` 글은 지금처럼 작성하면 됩니다. 실행 기능이 필요한 글만 확장자를 `.mdx`로 만듭니다.
 MDX는 Markdown 본문 안에 `PythonPlayground` 같은 UI 컴포넌트를 넣을 수 있는 형식입니다.
 
-완성된 예제는 `src/content/blog/DE Map/Python/시각화/01_Python_시각화_예제.mdx`에 있습니다.
+완성된 예제는 `src/content/blog/AI Map/Python/시각화/01_Python_시각화_예제.mdx`에 있습니다.
 발행된 주소는 `/posts/python-visualization-01/`입니다.
 
 ```mdx

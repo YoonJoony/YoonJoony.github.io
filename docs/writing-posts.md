@@ -2,9 +2,10 @@
 
 ## 1. 글을 둘 폴더 선택
 
-`src/content/blog/DE Map`, `BE Map`, `Project Map`, `Blog` 중 하나에 Markdown 또는 MDX 파일을 만듭니다.
+`src/content/blog/AI Map`, `BE Map`, `Project Map`, `Blog`, `Claude` 중 하나에 Markdown 또는 MDX 파일을 만듭니다.
 원하는 만큼 하위 폴더를 만들 수 있습니다. 폴더 위치가 Posts의 카테고리가 됩니다.
-이미지만 들어 있는 폴더는 카테고리로 표시하지 않습니다.
+새 최상위 폴더는 `src/data/categories.ts`에 실제 폴더 이름을 `id`로 등록하면 메뉴와 글 수집에 함께 반영됩니다.
+등록된 최상위 폴더는 공개 글이 없어도 표시합니다. 이미지나 초안만 들어 있는 하위 폴더는 표시하지 않습니다.
 
 ## 2. 글 정보 입력
 

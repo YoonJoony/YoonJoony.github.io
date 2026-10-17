@@ -4,17 +4,17 @@ import { buildPostTree, newestFirst, sortFolderPosts, validatePosts } from '../.
 import { normalizeTag, matchesTag, uniqueTags } from '../../src/lib/tags.ts';
 import { isAncestor, postsUrl } from '../../src/lib/post-urls.ts';
 
-const fixture = (slug: string, folder = 'DE Map/Python', fileName = slug + '.md') => ({
+const fixture = (slug: string, folder = 'AI Map/Python', fileName = slug + '.md') => ({
   slug, folder, fileName, pubDate: new Date('2026-09-25'), draft: false, body: 'A real post', filePath: folder + '/' + fileName,
 });
 
 test('each post belongs only to its direct folder, at the correct depth', () => {
   const roots = buildPostTree([
     fixture('parent'),
-    fixture('child', 'DE Map/Python/파이썬 기본기'),
+    fixture('child', 'AI Map/Python/파이썬 기본기'),
     fixture('another', 'BE Map/Python'),
   ]);
-  assert.deepEqual(roots.map((node) => node.name), ['DE MAP', 'BE MAP', 'PROJECT', 'BLOG']);
+  assert.deepEqual(roots.map((node) => node.name), ['AI MAP', 'BE MAP', 'PROJECT', 'BLOG', 'CLAUDE']);
   const python = roots[0].children[0];
   assert.deepEqual(roots[0].directPostIds, []);
   assert.deepEqual(python.directPostIds, ['parent']);
@@ -26,7 +26,7 @@ test('each post belongs only to its direct folder, at the correct depth', () => 
 });
 
 test('Korean folder names normalize to the same NFC path', () => {
-  const tree = buildPostTree([fixture('one', 'DE Map/기록'), fixture('two', 'DE Map/' + '기록'.normalize('NFD'))]);
+  const tree = buildPostTree([fixture('one', 'AI Map/기록'), fixture('two', 'AI Map/' + '기록'.normalize('NFD'))]);
   assert.equal(tree[0].children.length, 1);
   assert.equal(tree[0].children[0].directPostIds.length, 2);
 });
@@ -54,10 +54,10 @@ test('tags normalize presentation differences but keep C++ and C# distinct', () 
 });
 
 test('URLs round-trip Korean paths and symbolic tags without path prefix collisions', () => {
-  const url = new URL(postsUrl('DE Map/파이썬 기본기', 'c++'), 'https://example.com');
-  assert.equal(url.searchParams.get('folder'), 'DE Map/파이썬 기본기');
+  const url = new URL(postsUrl('AI Map/파이썬 기본기', 'c++'), 'https://example.com');
+  assert.equal(url.searchParams.get('folder'), 'AI Map/파이썬 기본기');
   assert.equal(url.searchParams.get('tag'), 'c++');
   assert.equal(postsUrl('ignored', '', 'python-study01'), '/posts/python-study01/');
-  assert.equal(isAncestor('DE Map/Python', 'DE Map/Python/기본기'), true);
-  assert.equal(isAncestor('DE Map/Python', 'DE Map/Python2'), false);
+  assert.equal(isAncestor('AI Map/Python', 'AI Map/Python/기본기'), true);
+  assert.equal(isAncestor('AI Map/Python', 'AI Map/Python2'), false);
 });

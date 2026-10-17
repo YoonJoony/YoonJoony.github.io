@@ -34,19 +34,22 @@ macOS에서는 설치된 Google Chrome을 사용합니다.
 
 ```text
 src/content/blog/
-├── DE Map/
+├── AI Map/
 │   ├── Python/파이썬 기본기/
 │   ├── 기록/
 │   └── SAM_AXI/2026-09/
 ├── BE Map/
-└── Project Map/
+├── Project Map/
+├── Blog/
+└── Claude/
 
 src/content/news/       # 뉴스 원문으로 연결하는 별도 컬렉션
 src/data/site.ts        # 소개 문구, 관심 분야, GitHub, 기본 이미지
-src/data/categories.ts  # 최상위 카테고리 표시 이름
+src/data/categories.ts  # 최상위 카테고리 폴더, 표시 이름, 글 수집 대상
 ```
 
 같은 폴더에 직접 작성한 글만 그 폴더 아래에 표시합니다.
+새 최상위 폴더는 `src/data/categories.ts`에 등록하면 메뉴와 글 수집에 함께 반영됩니다.
 하위 폴더의 글은 하위 폴더를 펼쳐서 읽습니다.
 폴더의 깊이에 맞춰 카드도 함께 들여씁니다.
 
