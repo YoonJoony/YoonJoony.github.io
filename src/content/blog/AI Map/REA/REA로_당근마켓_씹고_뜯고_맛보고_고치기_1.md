@@ -1,8 +1,8 @@
 ---
-title: "REA로 당근마켓 씹고 뜯고 맛보고 고치기 1"
+title: "matePet - 01. REA로 당근마켓 씹고 뜯고 맛보고 고치기"
 description: "REA(리버스 엔지니어링) 오픈소스를 활용한 개발 이야기"
 pubDate: 2026-10-17
-slug: rea-carrot-01
+slug: matePet-01
 tags: [AI]
 heroImage: ../../../../assets/hamster-carrot.gif
 draft: false
