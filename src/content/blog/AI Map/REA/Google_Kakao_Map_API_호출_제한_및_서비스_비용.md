@@ -2,7 +2,7 @@
 title: "matePet - 01. 서버/API 환경 및 호출 비용 정리"
 description: "실제 서비스 관점에서 바라본 한계와 간단한 내용입니다."
 pubDate: 2026-10-18
-slug: matePet-02
+slug: matepet-02
 tags: [AI]
 heroImage: ../../../../assets/hamster-carrot.gif
 draft: false
