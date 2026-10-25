@@ -4,12 +4,13 @@ description: "AI로 인해 개발자의 코딩 능력의 필요성과 어떤 능
 pubDate: 2026-10-25
 slug: dev-skills
 tags: [AI, Study]
-heroImage: ../../../assets/what-is-agentic-ai.avif
+heroImage: ../../../../assets/ai-insight-1.png
 draft: false
 ---
 
 ## AI 시대, 개발자의 진짜 실력은 코딩이 아니었습니다. (유튜브)
 [참고 링크](https://www.youtube.com/watch?v=FroSGe2K2EY&t=1s)
+`썸네일도 해당 썸네일을 참고한 2차 창작물입니다.`
 
 > 과거시절, 내가 밤새워 짠 코드. 비전공자가 1분만에 AI를 써서 개발한다.
 
