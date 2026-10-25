@@ -149,8 +149,14 @@ a.tag:hover { background: var(--surface-hover); }
 .folder-node summary:hover { background: var(--surface); }
 .folder-node[open] > summary { background: var(--surface); }
 .root-folder { margin-bottom: 8px; }
-.root-folder > summary { font-size: 18px; font-weight: 650; padding-block: 11px; }
+.root-folder > summary { font-size: 18px; font-weight: 650; padding-block: 11px; gap: 6px; flex-wrap: wrap; }
 .root-folder[open] > summary { background: transparent; }
+.folder-view-toggle { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; padding: 0 2px; min-height: 32px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 500; white-space: nowrap; }
+.folder-view-toggle:hover, .folder-view-toggle[aria-checked="true"] { color: var(--text); }
+.folder-view-track { display: inline-flex; align-items: center; width: 26px; height: 16px; padding: 2px; border: 1px solid var(--tag-line); border-radius: 999px; background: var(--surface); }
+.folder-view-track > span { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+.folder-view-toggle[aria-checked="true"] .folder-view-track { background: var(--active-bg); border-color: var(--active-bg); }
+.folder-view-toggle[aria-checked="true"] .folder-view-track > span { transform: translateX(10px); background: var(--active-text); }
 .folder-chevron { display: flex; align-items: center; }
 .folder-node[open] > summary .folder-chevron { transform: rotate(90deg); }
 /* 폴더 깊이별 들여쓰기. 영역이 중첩될 때마다 바깥/안쪽 여백 12px씩 추가됩니다.
@@ -164,6 +170,8 @@ a.tag:hover { background: var(--surface-hover); }
 .post-card--tree.is-selected { border-color: var(--muted); background: var(--surface); }
 .post-card--tree h3 { font-size: 14px; margin-top: 9px; }
 .post-card--tree .post-image-link img { aspect-ratio: 2.3; }
+.root-folder.is-title-only .post-card--tree .post-image-link { display: none; }
+.root-folder.is-title-only .post-card--tree h3 { margin-top: 0; }
 .post-card--tree .post-description { font-size: 12px; margin: 6px 0 9px; }
 .post-card--tree .tag { min-height: 25px; font-size: 11px; padding: 2px 9px; }
 /* 아직 글을 고르지 않았을 때 오른쪽 중앙에 나오는 안내입니다. */

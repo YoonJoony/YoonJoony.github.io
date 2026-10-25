@@ -25,6 +25,9 @@ function setupBrowser(root: HTMLElement) {
   // Set은 중복 없는 목록이며, has()로 해당 폴더·태그가 있는지 확인합니다.
   const folders = [...root.querySelectorAll<HTMLDetailsElement>('[data-folder]')];
   const folderIds = new Set(folders.map((folder) => folder.dataset.folder!));
+  const viewToggles = [...root.querySelectorAll<HTMLButtonElement>('[data-folder-view-toggle]')];
+  const titleOnlyFolders = new Map<string, boolean>();
+  const viewStorageKey = (folder: string) => 'yun-posts-title-only:' + folder;
   const cards = [...root.querySelectorAll<HTMLElement>('[data-post-card]')];
   const filters = [...root.querySelectorAll<HTMLAnchorElement>('[data-filter-tag]')];
   const tagIds = new Set(filters.map((filter) => filter.dataset.filterTag!));
@@ -46,6 +49,19 @@ function setupBrowser(root: HTMLElement) {
   // 빈 문자열은 선택하지 않은 상태입니다.
   let state = { folder: '', tag: '', slug: '' };
 
+  // 대메뉴마다 보기 설정을 기억합니다. 저장소가 차단되어도 현재 화면의 토글은 동작합니다.
+  function applyFolderViews() {
+    for (const toggle of viewToggles) {
+      const node = toggle.closest<HTMLDetailsElement>('[data-folder]')!;
+      const folder = node.dataset.folder!;
+      try { titleOnlyFolders.set(folder, sessionStorage.getItem(viewStorageKey(folder)) === 'true'); } catch {}
+      const titleOnly = titleOnlyFolders.get(folder) ?? false;
+      node.classList.toggle('is-title-only', titleOnly);
+      toggle.setAttribute('aria-checked', String(titleOnly));
+      toggle.hidden = !node.open;
+    }
+  }
+
   // 주소를 기준으로 화면을 맞춥니다. 새로고침·뒤로 가기에도 같은 상태를 복원합니다.
   function applyLocation() {
     const url = new URL(location.href);
@@ -66,6 +82,7 @@ function setupBrowser(root: HTMLElement) {
 
     // 선택 경로와 그 부모만 엽니다. BE MAP을 열면 이전 AI MAP 분기는 닫힙니다.
     for (const node of folders) node.open = isAncestor(node.dataset.folder!, folder);
+    applyFolderViews();
     // 태그가 맞지 않는 카드는 hidden으로 숨기고, 선택한 카드에는 강조 클래스를 붙입니다.
     for (const card of cards) {
       const tags: string[] = JSON.parse(card.dataset.tags!);
@@ -124,6 +141,19 @@ function setupBrowser(root: HTMLElement) {
     // Ctrl/Command+클릭이나 가운데 클릭은 브라우저의 새 탭 열기를 그대로 둡니다.
     if (!(event instanceof MouseEvent) || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const target = event.target as Element;
+    const viewToggle = target.closest<HTMLButtonElement>('[data-folder-view-toggle]');
+    // summary 안의 토글은 폴더 이동과 별개입니다. 읽던 글과 주소를 그대로 유지합니다.
+    if (viewToggle) {
+      event.preventDefault();
+      const node = viewToggle.closest<HTMLDetailsElement>('[data-folder]')!;
+      const folder = node.dataset.folder!;
+      const titleOnly = viewToggle.getAttribute('aria-checked') !== 'true';
+      titleOnlyFolders.set(folder, titleOnly);
+      node.classList.toggle('is-title-only', titleOnly);
+      viewToggle.setAttribute('aria-checked', String(titleOnly));
+      try { sessionStorage.setItem(viewStorageKey(folder), String(titleOnly)); } catch {}
+      return;
+    }
     const summary = target.closest('summary');
     // 폴더 클릭: 기본 details 동작을 멈추고 '한 분기만 열기' 규칙을 적용합니다.
     // 열린 폴더를 다시 누르면 부모 경로로 돌아가며, 기존 글 선택은 해제합니다.

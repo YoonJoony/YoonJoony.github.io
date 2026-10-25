@@ -13,7 +13,17 @@ const { node, posts, selectedSlug = '', selectedFolder = '' } = Astro.props;
 {/* details는 접고 펼칠 수 있는 HTML 요소이고 summary가 클릭할 제목입니다.
     open이 true이면 펼쳐집니다. 다른 분기를 접는 규칙은 posts-browser.ts에서 처리합니다. */}
 <details class:list={['folder-node', { 'root-folder': node.depth === 0 }]} data-folder={node.id} open={isAncestor(node.id, selectedFolder)}>
-  <summary><span class="folder-chevron"><Icon name="chevron" size={14} /></span><Icon name="folder" size={19} /><span>{node.name}</span></summary>
+  <summary>
+    <span class="folder-chevron"><Icon name="chevron" size={14} /></span>
+    <Icon name="folder" size={19} />
+    <span class="folder-name">{node.name}</span>
+    {node.depth === 0 && (
+      <button type="button" class="folder-view-toggle" role="switch" aria-checked="false" data-folder-view-toggle hidden>
+        <span>타이틀만 보기</span>
+        <span class="folder-view-track" aria-hidden="true"><span /></span>
+      </button>
+    )}
+  </summary>
   {/* 들여쓰기의 기준입니다. global.css의 .folder-children에 단계별 여백이 있습니다.
       폴더 안에 이 영역이 반복해서 들어가므로 깊어질 때마다 조금씩 오른쪽으로 이동합니다. */}
   <div class="folder-children">
